@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Favorites - Business Locator System</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>Business Locator System</h1>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="business.html">Businesses</a>
+        <a href="search.html">Search</a>
+        <a href="favorites.html">Favorites</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+</header>
+
+<section class="page-section">
+
+    <h2>❤️ My Favorite Business</h2>
+
+    <div id="favoriteResult"></div>
+
+</section>
+
+<footer>
+    <p>© 2026 Business Locator System. All Rights Reserved.</p>
+</footer>
+
+<script>
+
+let favorite = localStorage.getItem("favoriteBusiness");
+
+if (favorite) {
+
+    document.getElementById("favoriteResult").innerHTML =
+        "<div class='business-card'>" +
+        "<h3>❤️ " + favorite + "</h3>" +
+        "<p>This business is saved in your favorites.</p>" +
+        "<button onclick='removeFavorite()'>Remove Favorite</button>" +
+        "</div>";
+
+} else {
+
+    document.getElementById("favoriteResult").innerHTML =
+        "<p>No favorite business saved.</p>";
+
+}
+
+function removeFavorite() {
+
+    localStorage.removeItem("favoriteBusiness");
+
+    alert("Favorite removed successfully!");
+
+    location.reload();
+
+}
+
+</script>
+
+</body>
+</html>

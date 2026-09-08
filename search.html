@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Search Business - Business Locator System</title>
+
+    <link rel="stylesheet"
+        href="css/style.css">
+
+    <style>
+        .business-image {
+            width: 200px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .details-image {
+            width: 300px;
+            max-width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>Business Locator System</h1>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="business.html">Businesses</a>
+        <a href="search.html">Search</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+        <a href="contact.html">Contact</a>
+        <a href="admin.html">Admin</a>
+    </nav>
+
+</header>
+
+
+<main>
+
+    <h2>Search Business</h2>
+
+
+    <!-- SEARCH -->
+
+    <div class="search-box">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search Business, Category or Location..."
+        >
+
+        <button
+            type="button"
+            onclick="searchBusiness()">
+
+            🔍 Search
+
+        </button>
+
+    </div>
+
+
+    <!-- BUSINESS RESULTS -->
+
+    <div
+        class="business-container"
+        id="businessContainer">
+
+        <p>
+            Loading businesses from MongoDB... ⏳
+        </p>
+
+    </div>
+
+
+    <!-- DETAILS -->
+
+    <div
+        id="detailsBox"
+        class="details-box"
+        style="display:none;">
+
+        <h2>🏪 Business Details</h2>
+
+
+        <!-- BUSINESS IMAGE -->
+
+        <img
+            id="detailImage"
+            class="details-image"
+            src=""
+            alt="Business Image"
+        >
+
+
+        <p>
+            <b>Business Name:</b>
+            <span id="detailName"></span>
+        </p>
+
+
+        <p>
+            <b>Category:</b>
+            <span id="detailCategory"></span>
+        </p>
+
+
+        <p>
+            <b>Location:</b>
+            <span id="detailLocation"></span>
+        </p>
+
+
+        <p>
+            <b>Phone:</b>
+            <span id="detailPhone"></span>
+        </p>
+
+
+        <p>
+            <b>Rating:</b>
+            <span id="detailRating">
+                No ratings yet
+            </span>
+        </p>
+
+
+        <h3>📝 Reviews</h3>
+
+        <div id="reviewList">
+            Loading reviews...
+        </div>
+
+
+        <br>
+
+
+        <h3>⭐ Give Rating & Review</h3>
+
+
+        <select id="rating">
+
+            <option value="">
+                Select Rating
+            </option>
+
+            <option value="1">
+                ⭐ 1
+            </option>
+
+            <option value="2">
+                ⭐⭐ 2
+            </option>
+
+            <option value="3">
+                ⭐⭐⭐ 3
+            </option>
+
+            <option value="4">
+                ⭐⭐⭐⭐ 4
+            </option>
+
+            <option value="5">
+                ⭐⭐⭐⭐⭐ 5
+            </option>
+
+        </select>
+
+
+        <br><br>
+
+
+        <textarea
+            id="reviewText"
+            placeholder="Write your review..."
+            rows="4">
+        </textarea>
+
+
+        <br><br>
+
+
+        <button
+            type="button"
+            onclick="submitReview()">
+
+            ⭐ Submit Rating & Review
+
+        </button>
+
+
+        <br><br>
+
+
+        <button
+            type="button"
+            onclick="closeDetails()">
+
+            ❌ Close Details
+
+        </button>
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    <p>
+        © 2026 Business Locator System.
+        All Rights Reserved.
+    </p>
+
+</footer>
+
+
+<script>
+
+let businesses = [];
+
+let selectedBusiness = null;
+
+
+// LOAD BUSINESSES
+
+async function loadBusinesses() {
+
+    try {
+
+        const response =
+            await fetch("/api/businesses");
+
+        businesses =
+            await response.json();
+
+        displayBusinesses(businesses);
+
+    }
+
+    catch (error) {
+
+        document.getElementById("businessContainer").innerHTML =
+            "<p>❌ Failed to load businesses.</p>";
+
+        console.error(error);
+
+    }
+
+}
+
+
+// GET IMAGE
+
+function getBusinessImage(business) {
+
+    if (business.image) {
+
+        return business.image;
+
+    }
+
+
+    const category =
+        (business.category || "").toLowerCase();
+
+
+    if (category.includes("hospital")) {
+
+        return "images/hospital.png.png";
+
+    }
+
+    if (category.includes("hotel")) {
+
+        return "images/hotel.jpg.png";
+
+    }
+
+    if (
+        category.includes("restaurant") ||
+        category.includes("food")
+    ) {
+
+        return "images/restaurant.jpg.png";
+
+    }
+
+    if (
+        category.includes("supermarket") ||
+        category.includes("market") ||
+        category.includes("shopping")
+    ) {
+
+        return "images/supermarket.jpg.png";
+
+    }
+
+    if (
+        category.includes("medical") ||
+        category.includes("clinic") ||
+        category.includes("pharmacy")
+    ) {
+
+        return "images/medical.jpg";
+
+    }
+
+
+    return "images/medical.jpg";
+
+}
+
+
+// DISPLAY BUSINESSES
+
+function displayBusinesses(list) {
+
+    const container =
+        document.getElementById("businessContainer");
+
+
+    container.innerHTML = "";
+
+
+    if (list.length === 0) {
+
+        container.innerHTML =
+            "<p>❌ No businesses found.</p>";
+
+        return;
+
+    }
+
+
+    list.forEach(business => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "business-card";
+
+
+        card.innerHTML = `
+
+            <img
+                src="${getBusinessImage(business)}"
+                class="business-image"
+                alt="Business Image"
+            >
+
+            <h3>
+                ${business.name}
+            </h3>
+
+            <p>
+                <b>Category:</b>
+                ${business.category}
+            </p>
+
+            <p>
+                <b>Location:</b>
+                ${business.location}
+            </p>
+
+            <p>
+                <b>Phone:</b>
+                ${business.phone}
+            </p>
+
+            <button
+                onclick="showDetails('${business._id}')">
+
+                View Details
+
+            </button>
+
+        `;
+
+
+        container.appendChild(card);
+
+    });
+
+}
+
+
+// SEARCH
+
+function searchBusiness() {
+
+    const search =
+        document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    const filtered =
+        businesses.filter(business =>
+
+            business.name
+                .toLowerCase()
+                .includes(search)
+
+            ||
+
+            business.category
+                .toLowerCase()
+                .includes(search)
+
+            ||
+
+            business.location
+                .toLowerCase()
+                .includes(search)
+
+        );
+
+
+    displayBusinesses(filtered);
+
+}
+
+
+// SHOW DETAILS
+
+async function showDetails(id) {
+
+    selectedBusiness =
+        businesses.find(
+            business => business._id === id
+        );
+
+
+    if (!selectedBusiness) {
+
+        return;
+
+    }
+
+
+    document.getElementById("detailImage").src =
+        getBusinessImage(selectedBusiness);
+
+
+    document.getElementById("detailName").textContent =
+        selectedBusiness.name;
+
+
+    document.getElementById("detailCategory").textContent =
+        selectedBusiness.category;
+
+
+    document.getElementById("detailLocation").textContent =
+        selectedBusiness.location;
+
+
+    document.getElementById("detailPhone").textContent =
+        selectedBusiness.phone;
+
+
+    document.getElementById("detailsBox").style.display =
+        "block";
+
+
+    loadReviews(selectedBusiness.name);
+
+}
+
+
+// LOAD REVIEWS
+
+async function loadReviews(businessName) {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/reviews/" +
+                encodeURIComponent(businessName)
+            );
+
+
+        const reviews =
+            await response.json();
+
+
+        const reviewList =
+            document.getElementById("reviewList");
+
+
+        if (reviews.length === 0) {
+
+            reviewList.innerHTML =
+                "<p>No reviews yet.</p>";
+
+            document.getElementById("detailRating").textContent =
+                "No ratings yet";
+
+            return;
+
+        }
+
+
+        let total = 0;
+
+
+        reviewList.innerHTML = "";
+
+
+        reviews.forEach(review => {
+
+            total += Number(review.rating);
+
+
+            const p =
+                document.createElement("p");
+
+
+            p.innerHTML =
+                "⭐ " +
+                review.rating +
+                " - " +
+                review.review;
+
+
+            reviewList.appendChild(p);
+
+        });
+
+
+        const average =
+            (total / reviews.length).toFixed(1);
+
+
+        document.getElementById("detailRating").textContent =
+            "⭐ " + average + " / 5";
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+// SUBMIT REVIEW
+
+async function submitReview() {
+
+    if (!selectedBusiness) {
+
+        return;
+
+    }
+
+
+    const rating =
+        document.getElementById("rating").value;
+
+
+    const review =
+        document.getElementById("reviewText").value;
+
+
+    const email =
+        localStorage.getItem("userEmail");
+
+
+    if (!email) {
+
+        alert("Please login first.");
+
+        return;
+
+    }
+
+
+    if (!rating || !review) {
+
+        alert("Please select rating and write review.");
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch("/api/reviews", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    businessName:
+                        selectedBusiness.name,
+
+                    email: email,
+
+                    rating: Number(rating),
+
+                    review: review
+
+                })
+
+            });
+
+
+        const data =
+            await response.json();
+
+
+        alert(data.message);
+
+
+        document.getElementById("rating").value = "";
+
+        document.getElementById("reviewText").value = "";
+
+
+        loadReviews(selectedBusiness.name);
+
+    }
+
+    catch (error) {
+
+        alert("❌ Review failed.");
+
+        console.error(error);
+
+    }
+
+}
+
+
+// CLOSE DETAILS
+
+function closeDetails() {
+
+    document.getElementById("detailsBox").style.display =
+        "none";
+
+}
+
+
+// START
+
+loadBusinesses();
+
+</script>
+
+</body>
+
+</html>
