@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - Business Locator System</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>Business Locator System</h1>
+
+    <nav>
+
+        <a href="index.html">Home</a>
+        <a href="business.html">Businesses</a>
+        <a href="search.html">Search</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+        <a href="contact.html">Contact</a>
+
+    </nav>
+
+</header>
+
+
+<!-- ADMIN LOGIN -->
+
+<section class="page-section" id="adminLoginSection">
+
+    <h2>🔐 Admin Login</h2>
+
+    <form id="adminLoginForm">
+
+        <label>Admin Email</label>
+
+        <input
+            type="email"
+            id="adminEmail"
+            placeholder="Enter admin email"
+            required
+        >
+
+        <label>Admin Password</label>
+
+        <input
+            type="password"
+            id="adminPassword"
+            placeholder="Enter admin password"
+            required
+        >
+
+        <button type="submit">
+            🔐 Admin Login
+        </button>
+
+    </form>
+
+</section>
+
+
+<!-- ADMIN DASHBOARD -->
+
+<section
+    class="page-section"
+    id="dashboardSection"
+    style="display:none;">
+
+    <h2>🧑‍💼 Admin Dashboard</h2>
+
+    <button
+        type="button"
+        onclick="adminLogout()">
+
+        🚪 Logout
+
+    </button>
+
+    <hr>
+
+
+    <!-- ADD BUSINESS -->
+
+    <h3>➕ Add New Business</h3>
+
+    <form id="businessForm">
+
+        <label>Business Name</label>
+
+        <input
+            type="text"
+            id="businessName"
+            placeholder="Enter business name"
+            required
+        >
+
+
+        <label>Category</label>
+
+        <input
+            type="text"
+            id="businessCategory"
+            placeholder="Enter any category"
+            required
+        >
+
+
+        <label>Location</label>
+
+        <input
+            type="text"
+            id="businessLocation"
+            placeholder="Enter location"
+            required
+        >
+
+
+        <label>Phone</label>
+
+        <input
+            type="tel"
+            id="businessPhone"
+            placeholder="Enter phone number"
+            required
+        >
+
+
+        <!-- IMAGE UPLOAD -->
+
+        <label>Business Image</label>
+
+        <input
+            type="file"
+            id="businessImage"
+            accept="image/*"
+        >
+
+
+        <br><br>
+
+
+        <button type="submit">
+
+            ➕ Add Business
+
+        </button>
+
+    </form>
+
+    <hr>
+
+
+    <!-- BUSINESS LIST -->
+
+    <h3>📋 Business List</h3>
+
+    <div id="adminBusinessList">
+
+        <p>
+            Loading businesses...
+        </p>
+
+    </div>
+
+</section>
+
+
+<footer>
+
+    <p>
+        © 2026 Business Locator System.
+        All Rights Reserved.
+    </p>
+
+</footer>
+
+
+<script>
+
+/* ADMIN LOGIN DETAILS */
+
+const ADMIN_EMAIL = "admin@gmail.com";
+
+const ADMIN_PASSWORD = "admin123";
+
+
+/* BACKEND API */
+
+const API_URL = "/api/businesses";
+
+
+/* ADMIN LOGIN */
+
+document
+    .getElementById("adminLoginForm")
+    .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const email =
+            document
+            .getElementById("adminEmail")
+            .value
+            .trim();
+
+        const password =
+            document
+            .getElementById("adminPassword")
+            .value;
+
+        if (
+            email === ADMIN_EMAIL &&
+            password === ADMIN_PASSWORD
+        ) {
+
+            sessionStorage.setItem(
+                "adminLoggedIn",
+                "true"
+            );
+
+            alert(
+                "Admin Login Successful! ✅"
+            );
+
+            showDashboard();
+
+        } else {
+
+            alert(
+                "Invalid Admin Email or Password! ❌"
+            );
+
+        }
+
+    });
+
+
+/* SHOW DASHBOARD */
+
+function showDashboard() {
+
+    document
+        .getElementById("adminLoginSection")
+        .style.display = "none";
+
+    document
+        .getElementById("dashboardSection")
+        .style.display = "block";
+
+    displayBusinesses();
+
+}
+
+
+/* ADMIN LOGOUT */
+
+function adminLogout() {
+
+    sessionStorage.removeItem(
+        "adminLoggedIn"
+    );
+
+    alert(
+        "Admin Logged Out Successfully! ✅"
+    );
+
+    document
+        .getElementById("dashboardSection")
+        .style.display = "none";
+
+    document
+        .getElementById("adminLoginSection")
+        .style.display = "block";
+
+    document
+        .getElementById("adminLoginForm")
+        .reset();
+
+}
+
+
+/* ADD BUSINESS */
+
+document
+    .getElementById("businessForm")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+
+        const name =
+            document
+            .getElementById("businessName")
+            .value
+            .trim();
+
+
+        const category =
+            document
+            .getElementById("businessCategory")
+            .value
+            .trim();
+
+
+        const location =
+            document
+            .getElementById("businessLocation")
+            .value
+            .trim();
+
+
+        const phone =
+            document
+            .getElementById("businessPhone")
+            .value
+            .trim();
+
+
+        /* GET IMAGE */
+
+        const imageFile =
+            document
+            .getElementById("businessImage")
+            .files[0];
+
+
+        if (category === "") {
+
+            alert(
+                "Please enter a business category! ❌"
+            );
+
+            return;
+
+        }
+
+
+        /* FORM DATA */
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "name",
+            name
+        );
+
+        formData.append(
+            "category",
+            category
+        );
+
+        formData.append(
+            "location",
+            location
+        );
+
+        formData.append(
+            "phone",
+            phone
+        );
+
+
+        /* ADD IMAGE ONLY IF SELECTED */
+
+        if (imageFile) {
+
+            formData.append(
+                "image",
+                imageFile
+            );
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API_URL,
+                    {
+
+                        method: "POST",
+
+                        body: formData
+
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to add business"
+                );
+
+            }
+
+
+            await response.json();
+
+
+            alert(
+                "Business added successfully to MongoDB! ✅"
+            );
+
+
+            /* CLEAR FORM */
+
+            document
+                .getElementById("businessForm")
+                .reset();
+
+
+            /* SHOW UPDATED LIST */
+
+            displayBusinesses();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Add Business Error:",
+                error
+            );
+
+
+            alert(
+                "Unable to connect to Backend! ❌\n\n" +
+                "Please make sure server.js is running."
+            );
+
+        }
+
+    });
+
+
+/* DISPLAY BUSINESSES */
+
+async function displayBusinesses() {
+
+    const list =
+        document.getElementById(
+            "adminBusinessList"
+        );
+
+
+    list.innerHTML = `
+        <p>
+            Loading businesses from MongoDB... ⏳
+        </p>
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Backend API Error"
+            );
+
+        }
+
+
+        const businesses =
+            await response.json();
+
+
+        list.innerHTML = "";
+
+
+        if (
+            businesses.length === 0
+        ) {
+
+            list.innerHTML = `
+                <p>
+                    No businesses added yet.
+                </p>
+            `;
+
+            return;
+
+        }
+
+
+        businesses.forEach(
+            function(business) {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "business-card";
+
+
+                const image =
+                    business.image ||
+                    getCategoryImage(
+                        business.category
+                    );
+
+
+                card.innerHTML = `
+
+                    <img
+                        src="${image}"
+                        alt="${escapeHTML(
+                            business.name
+                        )}"
+                        class="business-image"
+                        style="
+                            width:200px;
+                            height:140px;
+                            object-fit:cover;
+                            border-radius:10px;
+                        "
+                    >
+
+                    <h3>
+                        🏪
+                        ${escapeHTML(
+                            business.name
+                        )}
+                    </h3>
+
+                    <p>
+                        <b>Category:</b>
+                        ${escapeHTML(
+                            business.category
+                        )}
+                    </p>
+
+                    <p>
+                        <b>Location:</b>
+                        ${escapeHTML(
+                            business.location
+                        )}
+                    </p>
+
+                    <p>
+                        <b>Phone:</b>
+                        ${escapeHTML(
+                            business.phone
+                        )}
+                    </p>
+
+                    <button
+                        type="button"
+                        onclick="editBusiness(
+                            '${business._id}'
+                        )">
+
+                        ✏️ Edit
+
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="deleteBusiness(
+                            '${business._id}'
+                        )">
+
+                        🗑️ Delete
+
+                    </button>
+
+                `;
+
+
+                list.appendChild(
+                    card
+                );
+
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Display Error:",
+            error
+        );
+
+
+        list.innerHTML = `
+
+            <div class="business-card">
+
+                <h3>
+                    ❌ Unable to load businesses
+                </h3>
+
+                <p>
+                    Please make sure
+                    <b>server.js</b>
+                    is running on port
+                    <b>5000</b>.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* CATEGORY IMAGE */
+
+function getCategoryImage(category) {
+
+    const value =
+        String(category)
+            .toLowerCase()
+            .trim();
+
+
+    if (
+        value.includes("shopping") ||
+        value.includes("mall")
+    ) {
+
+        return "images/shoppingmall.jpg.png";
+
+    }
+
+
+    if (
+        value.includes("bakery")
+    ) {
+
+        return "images/bakery.jpg.png";
+
+    }
+
+
+    if (
+        value.includes("hospital")
+    ) {
+
+        return "images/hospital.png.png";
+
+    }
+
+
+    if (
+        value.includes("hotel")
+    ) {
+
+        return "images/hotel.jpg.png";
+
+    }
+
+
+    if (
+        value.includes("medical") ||
+        value.includes("clinic") ||
+        value.includes("pharmacy")
+    ) {
+
+        return "images/medical.jpg";
+
+    }
+
+
+    if (
+        value.includes("restaurant") ||
+        value.includes("food")
+    ) {
+
+        return "images/restaurant.jpg.png";
+
+    }
+
+
+    if (
+        value.includes("supermarket") ||
+        value.includes("market")
+    ) {
+
+        return "images/supermarket.jpg.png";
+
+    }
+
+
+    return "images/medical.jpg";
+
+}
+
+
+/* EDIT BUSINESS */
+
+async function editBusiness(id) {
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to get businesses"
+            );
+
+        }
+
+
+        const businesses =
+            await response.json();
+
+
+        const business =
+            businesses.find(
+                function(item) {
+
+                    return item._id === id;
+
+                }
+            );
+
+
+        if (!business) {
+
+            alert(
+                "Business not found! ❌"
+            );
+
+            return;
+
+        }
+
+
+        let newName =
+            prompt(
+                "Enter Business Name:",
+                business.name
+            );
+
+
+        if (
+            newName === null
+        ) {
+
+            return;
+
+        }
+
+
+        newName =
+            newName.trim();
+
+
+        if (
+            newName === ""
+        ) {
+
+            alert(
+                "Business name cannot be empty!"
+            );
+
+            return;
+
+        }
+
+
+        let newCategory =
+            prompt(
+                "Enter any Category:",
+                business.category
+            );
+
+
+        if (
+            newCategory === null
+        ) {
+
+            return;
+
+        }
+
+
+        newCategory =
+            newCategory.trim();
+
+
+        if (
+            newCategory === ""
+        ) {
+
+            alert(
+                "Category cannot be empty!"
+            );
+
+            return;
+
+        }
+
+
+        let newLocation =
+            prompt(
+                "Enter Location:",
+                business.location
+            );
+
+
+        if (
+            newLocation === null
+        ) {
+
+            return;
+
+        }
+
+
+        newLocation =
+            newLocation.trim();
+
+
+        if (
+            newLocation === ""
+        ) {
+
+            alert(
+                "Location cannot be empty!"
+            );
+
+            return;
+
+        }
+
+
+        let newPhone =
+            prompt(
+                "Enter Phone:",
+                business.phone
+            );
+
+
+        if (
+            newPhone === null
+        ) {
+
+            return;
+
+        }
+
+
+        newPhone =
+            newPhone.trim();
+
+
+        if (
+            newPhone === ""
+        ) {
+
+            alert(
+                "Phone number cannot be empty!"
+            );
+
+            return;
+
+        }
+
+
+        const updatedBusiness = {
+
+            name: newName,
+
+            category: newCategory,
+
+            location: newLocation,
+
+            phone: newPhone
+
+        };
+
+
+        const updateResponse =
+            await fetch(
+                API_URL + "/" + id,
+                {
+
+                    method: "PUT",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            updatedBusiness
+                        )
+
+                }
+            );
+
+
+        if (
+            !updateResponse.ok
+        ) {
+
+            throw new Error(
+                "Update failed"
+            );
+
+        }
+
+
+        alert(
+            "Business updated successfully! ✅"
+        );
+
+
+        displayBusinesses();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Edit Error:",
+            error
+        );
+
+
+        alert(
+            "Unable to update business! ❌"
+        );
+
+    }
+
+}
+
+
+/* DELETE BUSINESS */
+
+async function deleteBusiness(id) {
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to get businesses"
+            );
+
+        }
+
+
+        const businesses =
+            await response.json();
+
+
+        const business =
+            businesses.find(
+                function(item) {
+
+                    return item._id === id;
+
+                }
+            );
+
+
+        if (!business) {
+
+            alert(
+                "Business not found! ❌"
+            );
+
+            return;
+
+        }
+
+
+        const confirmDelete =
+            confirm(
+                "Are you sure you want to delete " +
+                business.name +
+                "?"
+            );
+
+
+        if (
+            !confirmDelete
+        ) {
+
+            return;
+
+        }
+
+
+        const deleteResponse =
+            await fetch(
+                API_URL + "/" + id,
+                {
+
+                    method: "DELETE"
+
+                }
+            );
+
+
+        if (
+            !deleteResponse.ok
+        ) {
+
+            throw new Error(
+                "Delete failed"
+            );
+
+        }
+
+
+        alert(
+            "Business deleted successfully! ✅"
+        );
+
+
+        displayBusinesses();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Delete Error:",
+            error
+        );
+
+
+        alert(
+            "Unable to delete business! ❌"
+        );
+
+    }
+
+}
+
+
+/* ESCAPE HTML */
+
+function escapeHTML(value) {
+
+    return String(value)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* CHECK ADMIN SESSION */
+
+if (
+    sessionStorage.getItem(
+        "adminLoggedIn"
+    ) === "true"
+) {
+
+    showDashboard();
+
+}
+
+</script>
+
+</body>
+
+</html>
