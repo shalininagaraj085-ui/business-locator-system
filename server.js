@@ -22,24 +22,29 @@ const PORT = process.env.PORT || 5000;
 ========================================= */
 
 app.use(cors());
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+app.use(
+    express.urlencoded({
+        extended: true
+    })
+);
 
 
 /* =========================================
    SERVE FRONTEND FILES
 ========================================= */
 
-// server.js is in the project root
-app.use(express.static(__dirname));
+// server.js is in project root
+app.use(
+    express.static(__dirname)
+);
 
 
 /* =========================================
    IMAGE UPLOAD SETUP
 ========================================= */
-
-// Images will be stored inside:
-// project/images/uploads
 
 const uploadFolder = path.join(
     __dirname,
@@ -48,7 +53,7 @@ const uploadFolder = path.join(
 );
 
 
-// Create uploads folder automatically
+// Create upload folder automatically
 if (!fs.existsSync(uploadFolder)) {
 
     fs.mkdirSync(
@@ -62,12 +67,26 @@ if (!fs.existsSync(uploadFolder)) {
 
 
 /* =========================================
+   SERVE UPLOADED IMAGES
+========================================= */
+
+app.use(
+    "/images/uploads",
+    express.static(uploadFolder)
+);
+
+
+/* =========================================
    MULTER STORAGE
 ========================================= */
 
 const storage = multer.diskStorage({
 
-    destination: function (req, file, cb) {
+    destination: function (
+        req,
+        file,
+        cb
+    ) {
 
         cb(
             null,
@@ -76,7 +95,11 @@ const storage = multer.diskStorage({
 
     },
 
-    filename: function (req, file, cb) {
+    filename: function (
+        req,
+        file,
+        cb
+    ) {
 
         const extension =
             path.extname(
@@ -177,26 +200,25 @@ const MONGODB_URI =
     "mongodb://127.0.0.1:27017/businesslocator";
 
 
-mongoose.connect(
-    MONGODB_URI
-)
+mongoose
+    .connect(MONGODB_URI)
 
-.then(function () {
+    .then(function () {
 
-    console.log(
-        "MongoDB Connected Successfully! ✅"
-    );
+        console.log(
+            "MongoDB Connected Successfully! ✅"
+        );
 
-})
+    })
 
-.catch(function (error) {
+    .catch(function (error) {
 
-    console.error(
-        "MongoDB Connection Error:",
-        error.message
-    );
+        console.error(
+            "MongoDB Connection Error:",
+            error.message
+        );
 
-});
+    });
 
 
 /* =========================================
@@ -604,8 +626,8 @@ app.post(
 
             if (
                 !businessName ||
-                !ratingNumber ||
-                !review
+                !review ||
+                Number.isNaN(ratingNumber)
             ) {
 
                 return res.status(400).json({
@@ -714,7 +736,6 @@ app.get(
                         businessName
 
                 })
-
                 .sort({
 
                     createdAt:
@@ -1025,7 +1046,6 @@ app.put(
             }
 
 
-            // Update image only when new image is uploaded
             if (req.file) {
 
                 business.image =
@@ -1138,7 +1158,12 @@ app.delete(
 ========================================= */
 
 app.use(
-    function (error, req, res, next) {
+    function (
+        error,
+        req,
+        res,
+        next
+    ) {
 
         if (
             error instanceof multer.MulterError
