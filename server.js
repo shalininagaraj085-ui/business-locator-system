@@ -1,3 +1,4 @@
+```js
 require("dotenv").config();
 
 const express = require("express");
@@ -22,22 +23,26 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 
-// Serve frontend files
-app.use(express.static(path.join(__dirname, "..")));
+/* =========================================
+   SERVE FRONTEND FILES
+========================================= */
+
+// server.js is in the project root
+app.use(express.static(__dirname));
 
 
 /* =========================================
    IMAGE UPLOAD SETUP
 ========================================= */
 
-// Images will be stored here:
-// s/images/uploads
+// Images will be stored inside:
+// project/images/uploads
 
 const uploadFolder = path.join(
     __dirname,
-    "..",
     "images",
     "uploads"
 );
@@ -48,40 +53,58 @@ if (!fs.existsSync(uploadFolder)) {
 
     fs.mkdirSync(
         uploadFolder,
-        { recursive: true }
+        {
+            recursive: true
+        }
     );
 
 }
 
 
-// Image file name setup
+/* =========================================
+   MULTER STORAGE
+========================================= */
+
 const storage = multer.diskStorage({
 
     destination: function (req, file, cb) {
 
-        cb(null, uploadFolder);
+        cb(
+            null,
+            uploadFolder
+        );
 
     },
 
     filename: function (req, file, cb) {
 
         const extension =
-            path.extname(file.originalname);
+            path.extname(
+                file.originalname
+            );
 
         const fileName =
             Date.now() +
             "-" +
-            Math.round(Math.random() * 100000) +
+            Math.round(
+                Math.random() * 100000
+            ) +
             extension;
 
-        cb(null, fileName);
+        cb(
+            null,
+            fileName
+        );
 
     }
 
 });
 
 
-// Allow image files only
+/* =========================================
+   IMAGE FILE FILTER
+========================================= */
+
 const fileFilter = function (
     req,
     file,
@@ -89,12 +112,15 @@ const fileFilter = function (
 ) {
 
     const allowedTypes = [
+
         "image/jpeg",
         "image/jpg",
         "image/png",
         "image/webp",
         "image/gif"
+
     ];
+
 
     if (
         allowedTypes.includes(
@@ -102,7 +128,10 @@ const fileFilter = function (
         )
     ) {
 
-        cb(null, true);
+        cb(
+            null,
+            true
+        );
 
     }
 
@@ -119,7 +148,10 @@ const fileFilter = function (
 };
 
 
-// Multer configuration
+/* =========================================
+   MULTER CONFIGURATION
+========================================= */
+
 const upload = multer({
 
     storage: storage,
@@ -137,31 +169,53 @@ const upload = multer({
 
 
 /* =========================================
-   MONGODB LOCAL CONNECTION
+   MONGODB CONNECTION
 ========================================= */
 
 const MONGODB_URI =
     process.env.MONGODB_URI ||
     "mongodb://127.0.0.1:27017/businesslocator";
 
-mongoose.connect(MONGODB_URI)
 
-    .then(function () {
+mongoose.connect(
+    MONGODB_URI
+)
 
-        console.log(
-            "MongoDB Connected Successfully! ✅"
+.then(function () {
+
+    console.log(
+        "MongoDB Connected Successfully! ✅"
+    );
+
+})
+
+.catch(function (error) {
+
+    console.error(
+        "MongoDB Connection Error:",
+        error.message
+    );
+
+});
+
+
+/* =========================================
+   HOME PAGE
+========================================= */
+
+app.get(
+    "/",
+    function (req, res) {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                "index.html"
+            )
         );
 
-    })
-
-    .catch(function (error) {
-
-        console.error(
-            "MongoDB Connection Error:",
-            error.message
-        );
-
-    });
+    }
+);
 
 
 /* =========================================
@@ -638,7 +692,7 @@ app.post(
 
 
 /* =========================================
-   GET REVIEWS
+   GET REVIEWS FOR BUSINESS
 ========================================= */
 
 app.get(
@@ -647,16 +701,31 @@ app.get(
 
         try {
 
+            const businessName =
+                decodeURIComponent(
+                    req.params.businessName
+                );
+
+
             const reviews =
                 await Review.find({
 
                     businessName:
-                        req.params.businessName
+                        businessName
+
+                })
+
+                .sort({
+
+                    createdAt:
+                        -1
 
                 });
 
 
-            res.json(reviews);
+            res.json(
+                reviews
+            );
 
         }
 
@@ -924,20 +993,39 @@ app.put(
             }
 
 
-            business.name =
-                req.body.name;
+            if (req.body.name) {
 
-            business.category =
-                req.body.category;
+                business.name =
+                    req.body.name;
 
-            business.location =
-                req.body.location;
-
-            business.phone =
-                req.body.phone;
+            }
 
 
-            // If new image uploaded
+            if (req.body.category) {
+
+                business.category =
+                    req.body.category;
+
+            }
+
+
+            if (req.body.location) {
+
+                business.location =
+                    req.body.location;
+
+            }
+
+
+            if (req.body.phone) {
+
+                business.phone =
+                    req.body.phone;
+
+            }
+
+
+            // Update image only when new image is uploaded
             if (req.file) {
 
                 business.image =
@@ -1083,7 +1171,21 @@ app.use(
         }
 
 
-        next(error);
+        console.error(
+            "Server Error:",
+            error
+        );
+
+
+        res.status(500).json({
+
+            message:
+                "Internal server error",
+
+            error:
+                error.message
+
+        });
 
     }
 );
@@ -1104,3 +1206,4 @@ app.listen(
 
     }
 );
+```
