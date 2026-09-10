@@ -1,128 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Businesses - Business Locator System
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="css/style.css"
-    >
-
-</head>
-
-
-<body>
-
-
-<header>
-
-    <h1>
-        Business Locator System
-    </h1>
-
-
-    <nav>
-
-        <a href="index.html">
-            Home
-        </a>
-
-        <a href="business.html">
-            Businesses
-        </a>
-
-        <a href="search.html">
-            Search
-        </a>
-
-        <a href="login.html">
-            Login
-        </a>
-
-        <a href="register.html">
-            Register
-        </a>
-
-        <a href="contact.html">
-            Contact
-        </a>
-
-        <a href="favorites.html">
-            Favorites
-        </a>
-
-        <a href="admin.html">
-            Admin
-        </a>
-
-    </nav>
-
-</header>
-
-
-
-<section class="page-section">
-
-    <h2>
-        Available Businesses
-    </h2>
-
-
-    <div
-        class="business-container"
-        id="businessContainer"
-    >
-
-        <p>
-            Loading businesses from MongoDB... ⏳
-        </p>
-
-    </div>
-
-</section>
-
-
-
-<footer>
-
-    <p>
-        © 2026 Business Locator System.
-        All Rights Reserved.
-    </p>
-
-</footer>
-
-
-
 <script>
-
 
 /* ==================================================
    BACKEND API
 ================================================== */
 
-const API_URL =
-    "http://localhost:5000/api/businesses";
+const API_URL = "/api/businesses";
 
+const FAVORITE_API_URL = "/api/favorites";
 
-const FAVORITE_API_URL =
-    "http://localhost:5000/api/favorites";
-
-
-const REVIEW_API_URL =
-    "http://localhost:5000/api/reviews";
-
+const REVIEW_API_URL = "/api/reviews";
 
 
 /* ==================================================
@@ -132,55 +18,32 @@ const REVIEW_API_URL =
 loadBusinesses();
 
 
-
 async function loadBusinesses() {
 
     const container =
-        document.getElementById(
-            "businessContainer"
-        );
-
+        document.getElementById("businessContainer");
 
     container.innerHTML = `
-
         <p>
             Loading businesses from MongoDB... ⏳
         </p>
-
     `;
-
 
     try {
 
-        const response =
-            await fetch(API_URL);
-
+        const response = await fetch(API_URL);
 
         if (!response.ok) {
-
-            throw new Error(
-                "Backend API Error"
-            );
-
+            throw new Error("Backend API Error");
         }
 
-
-        const businesses =
-            await response.json();
-
+        const businesses = await response.json();
 
         if (!Array.isArray(businesses)) {
-
-            throw new Error(
-                "Invalid business data"
-            );
-
+            throw new Error("Invalid business data");
         }
 
-
-        displayBusinesses(
-            businesses
-        );
+        await displayBusinesses(businesses);
 
     }
 
@@ -191,9 +54,7 @@ async function loadBusinesses() {
             error
         );
 
-
         container.innerHTML = `
-
             <div class="business-card">
 
                 <h3>
@@ -201,43 +62,33 @@ async function loadBusinesses() {
                 </h3>
 
                 <p>
-                    Please make sure
-                    <b>server.js</b>
-                    is running on port
-                    <b>5000</b>.
+                    Backend connection failed.
+                </p>
+
+                <p>
+                    Please check the server and MongoDB connection.
                 </p>
 
             </div>
-
         `;
-
     }
-
 }
-
 
 
 /* ==================================================
    DISPLAY BUSINESSES
 ================================================== */
 
-function displayBusinesses(
-    businesses
-) {
+async function displayBusinesses(businesses) {
 
     const container =
-        document.getElementById(
-            "businessContainer"
-        );
-
+        document.getElementById("businessContainer");
 
     container.innerHTML = "";
-
 
     if (businesses.length === 0) {
 
         container.innerHTML = `
-
             <div class="business-card">
 
                 <h3>
@@ -249,265 +100,362 @@ function displayBusinesses(
                 </p>
 
             </div>
-
         `;
 
         return;
-
     }
 
 
-    businesses.forEach(
-        function(business, index) {
+    for (
+        let index = 0;
+        index < businesses.length;
+        index++
+    ) {
 
+        const business = businesses[index];
 
-            const image =
-                getCategoryImage(
-                    business.category
+        let rating = 0;
+        let reviewCount = 0;
+
+        /* ------------------------------------------
+           GET REVIEWS
+        ------------------------------------------ */
+
+        try {
+
+            const reviewResponse =
+                await fetch(
+                    REVIEW_API_URL +
+                    "/" +
+                    encodeURIComponent(
+                        business.name
+                    )
                 );
 
+            if (reviewResponse.ok) {
 
-            const card =
-                document.createElement(
-                    "div"
-                );
+                const reviews =
+                    await reviewResponse.json();
 
+                if (Array.isArray(reviews) &&
+                    reviews.length > 0) {
 
-            card.className =
-                "business-card";
+                    const total =
+                        reviews.reduce(
+                            function(sum, item) {
 
+                                return sum +
+                                    Number(item.rating || 0);
 
-            card.innerHTML = `
+                            },
+                            0
+                        );
 
-                <!-- BUSINESS IMAGE -->
+                    rating =
+                        total / reviews.length;
 
-                <img
-                    src="${image}"
-                    alt="${escapeHTML(
-                        business.name
-                    )}"
-                    class="business-image"
-                    onerror="this.onerror=null; this.src='images/medical.jpg';"
-                >
+                    reviewCount =
+                        reviews.length;
+                }
+            }
 
+        }
 
-                <!-- BUSINESS NAME -->
+        catch (error) {
 
-                <h3>
-
-                    🏪
-                    ${escapeHTML(
-                        business.name
-                    )}
-
-                </h3>
-
-
-                <!-- CATEGORY -->
-
-                <p>
-
-                    <b>Category:</b>
-
-                    ${escapeHTML(
-                        business.category
-                    )}
-
-                </p>
-
-
-                <!-- LOCATION -->
-
-                <p>
-
-                    <b>Location:</b>
-
-                    ${escapeHTML(
-                        business.location
-                    )}
-
-                </p>
-
-
-                <!-- PHONE -->
-
-                <p>
-
-                    <b>Phone:</b>
-
-                    ${escapeHTML(
-                        business.phone
-                    )}
-
-                </p>
-
-
-                <!-- RATING -->
-
-                <p>
-
-                    ⭐⭐⭐⭐
-
-                </p>
-
-
-                <!-- VIEW DETAILS -->
-
-                <button
-                    type="button"
-                    onclick="viewDetails(
-                        '${escapeJS(
-                            business.name
-                        )}',
-                        '${escapeJS(
-                            business.location
-                        )}',
-                        '${escapeJS(
-                            business.phone
-                        )}'
-                    )"
-                >
-
-                    🔎 View Details
-
-                </button>
-
-
-                <!-- GOOGLE MAPS -->
-
-                <button
-                    type="button"
-                    onclick="viewLocation(
-                        '${escapeJS(
-                            business.name
-                        )}',
-                        '${escapeJS(
-                            business.location
-                        )}'
-                    )"
-                >
-
-                    📍 View Location
-
-                </button>
-
-
-                <!-- FAVORITE -->
-
-                <button
-                    type="button"
-                    onclick="addFavorite(
-                        '${escapeJS(
-                            business.name
-                        )}'
-                    )"
-                >
-
-                    ❤️ Add to Favorites
-
-                </button>
-
-
-                <!-- REVIEW -->
-
-                <div class="review-box">
-
-                    <h4>
-
-                        ⭐ Rate & Review
-
-                    </h4>
-
-
-                    <select
-                        id="rating${index}"
-                    >
-
-                        <option value="">
-                            Select Rating
-                        </option>
-
-
-                        <option value="1">
-                            ⭐
-                        </option>
-
-
-                        <option value="2">
-                            ⭐⭐
-                        </option>
-
-
-                        <option value="3">
-                            ⭐⭐⭐
-                        </option>
-
-
-                        <option value="4">
-                            ⭐⭐⭐⭐
-                        </option>
-
-
-                        <option value="5">
-                            ⭐⭐⭐⭐⭐
-                        </option>
-
-                    </select>
-
-
-                    <textarea
-                        id="review${index}"
-                        placeholder="Write your review"
-                    ></textarea>
-
-
-                    <button
-                        type="button"
-                        onclick="submitReview(
-                            'rating${index}',
-                            'review${index}',
-                            '${escapeJS(
-                                business.name
-                            )}'
-                        )"
-                    >
-
-                        ⭐ Submit Review
-
-                    </button>
-
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                card
+            console.log(
+                "Review loading error:",
+                error
             );
 
         }
-    );
+
+
+        /* ------------------------------------------
+           IMAGE
+        ------------------------------------------ */
+
+        const image =
+            business.image ||
+            getCategoryImage(
+                business.category
+            );
+
+
+        /* ------------------------------------------
+           CREATE CARD
+        ------------------------------------------ */
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "business-card";
+
+
+        /* ------------------------------------------
+           RATING DISPLAY
+        ------------------------------------------ */
+
+        let stars = "";
+
+        if (rating > 0) {
+
+            const roundedRating =
+                Math.round(rating);
+
+            for (
+                let i = 1;
+                i <= 5;
+                i++
+            ) {
+
+                stars +=
+                    i <= roundedRating
+                        ? "⭐"
+                        : "☆";
+            }
+
+        } else {
+
+            stars = "☆☆☆☆☆";
+        }
+
+
+        card.innerHTML = `
+
+            <!-- BUSINESS IMAGE -->
+
+            <img
+                src="${image}"
+                alt="${escapeHTML(
+                    business.name
+                )}"
+                class="business-image"
+                onerror="
+                    this.onerror=null;
+                    this.src='images/medical.jpg';
+                "
+            >
+
+
+            <!-- BUSINESS NAME -->
+
+            <h3>
+
+                🏪
+                ${escapeHTML(
+                    business.name
+                )}
+
+            </h3>
+
+
+            <!-- CATEGORY -->
+
+            <p>
+
+                <b>Category:</b>
+
+                ${escapeHTML(
+                    business.category
+                )}
+
+            </p>
+
+
+            <!-- LOCATION -->
+
+            <p>
+
+                <b>Location:</b>
+
+                ${escapeHTML(
+                    business.location
+                )}
+
+            </p>
+
+
+            <!-- PHONE -->
+
+            <p>
+
+                <b>Phone:</b>
+
+                ${escapeHTML(
+                    business.phone
+                )}
+
+            </p>
+
+
+            <!-- RATING -->
+
+            <p>
+
+                <b>Rating:</b>
+
+                ${stars}
+
+                ${
+                    rating > 0
+                    ? " " + rating.toFixed(1) + "/5"
+                    : " No ratings yet"
+                }
+
+                ${
+                    reviewCount > 0
+                    ? " (" + reviewCount + " reviews)"
+                    : ""
+                }
+
+            </p>
+
+
+            <!-- VIEW DETAILS -->
+
+            <button
+                type="button"
+                onclick="viewDetails(
+                    '${escapeJS(
+                        business.name
+                    )}',
+                    '${escapeJS(
+                        business.location
+                    )}',
+                    '${escapeJS(
+                        business.phone
+                    )}'
+                )"
+            >
+
+                🔎 View Details
+
+            </button>
+
+
+            <!-- GOOGLE MAPS -->
+
+            <button
+                type="button"
+                onclick="viewLocation(
+                    '${escapeJS(
+                        business.name
+                    )}',
+                    '${escapeJS(
+                        business.location
+                    )}'
+                )"
+            >
+
+                📍 View Location
+
+            </button>
+
+
+            <!-- FAVORITE -->
+
+            <button
+                type="button"
+                onclick="addFavorite(
+                    '${escapeJS(
+                        business.name
+                    )}'
+                )"
+            >
+
+                ❤️ Add to Favorites
+
+            </button>
+
+
+            <!-- REVIEW -->
+
+            <div class="review-box">
+
+                <h4>
+
+                    ⭐ Rate & Review
+
+                </h4>
+
+
+                <select
+                    id="rating${index}"
+                >
+
+                    <option value="">
+                        Select Rating
+                    </option>
+
+                    <option value="1">
+                        ⭐
+                    </option>
+
+                    <option value="2">
+                        ⭐⭐
+                    </option>
+
+                    <option value="3">
+                        ⭐⭐⭐
+                    </option>
+
+                    <option value="4">
+                        ⭐⭐⭐⭐
+                    </option>
+
+                    <option value="5">
+                        ⭐⭐⭐⭐⭐
+                    </option>
+
+                </select>
+
+
+                <textarea
+                    id="review${index}"
+                    placeholder="Write your review"
+                ></textarea>
+
+
+                <button
+                    type="button"
+                    onclick="submitReview(
+                        'rating${index}',
+                        'review${index}',
+                        '${escapeJS(
+                            business.name
+                        )}'
+                    )"
+                >
+
+                    ⭐ Submit Review
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(card);
+
+    }
 
 }
 
 
-
 /* ==================================================
    CATEGORY IMAGE
-   7 BUSINESS TYPES
 ================================================== */
 
-function getCategoryImage(
-    category
-) {
+function getCategoryImage(category) {
 
     const value =
         String(category || "")
             .toLowerCase()
             .trim();
 
-
-    /* SHOPPING MALL */
 
     if (
         value === "shopping mall" ||
@@ -522,8 +470,6 @@ function getCategoryImage(
     }
 
 
-    /* BAKERY */
-
     if (
         value === "bakery" ||
         value.includes("bakery")
@@ -533,8 +479,6 @@ function getCategoryImage(
 
     }
 
-
-    /* HOSPITAL */
 
     if (
         value === "hospital" ||
@@ -546,8 +490,6 @@ function getCategoryImage(
     }
 
 
-    /* HOTEL */
-
     if (
         value === "hotel" ||
         value.includes("hotel")
@@ -557,8 +499,6 @@ function getCategoryImage(
 
     }
 
-
-    /* MEDICAL */
 
     if (
         value === "medical" ||
@@ -572,8 +512,6 @@ function getCategoryImage(
     }
 
 
-    /* RESTAURANT */
-
     if (
         value === "restaurant" ||
         value === "food" ||
@@ -586,8 +524,6 @@ function getCategoryImage(
     }
 
 
-    /* SUPERMARKET */
-
     if (
         value === "supermarket" ||
         value === "super market" ||
@@ -599,26 +535,22 @@ function getCategoryImage(
     }
 
 
-    /* DEFAULT */
-
     return "images/medical.jpg";
 
 }
-
 
 
 /* ==================================================
    VIEW DETAILS
 ================================================== */
 
-function viewDetails(
+async function viewDetails(
     name,
     location,
     phone
 ) {
 
-    alert(
-
+    let message =
         "Business Name: " +
         name +
 
@@ -626,12 +558,110 @@ function viewDetails(
         location +
 
         "\n\nPhone: " +
-        phone
+        phone;
 
-    );
+
+    try {
+
+        const response =
+            await fetch(
+                REVIEW_API_URL +
+                "/" +
+                encodeURIComponent(name)
+            );
+
+
+        if (response.ok) {
+
+            const reviews =
+                await response.json();
+
+
+            if (
+                Array.isArray(reviews) &&
+                reviews.length > 0
+            ) {
+
+                const total =
+                    reviews.reduce(
+                        function(sum, item) {
+
+                            return sum +
+                                Number(
+                                    item.rating || 0
+                                );
+
+                        },
+                        0
+                    );
+
+
+                const average =
+                    total / reviews.length;
+
+
+                message +=
+                    "\n\n⭐ Rating: " +
+                    average.toFixed(1) +
+                    "/5";
+
+
+                message +=
+                    "\n📝 Reviews: " +
+                    reviews.length;
+
+
+                message +=
+                    "\n\n--- Reviews ---";
+
+
+                reviews.forEach(
+                    function(item) {
+
+                        message +=
+                            "\n\n⭐ " +
+                            item.rating +
+                            "/5";
+
+
+                        if (item.review) {
+
+                            message +=
+                                "\n" +
+                                item.review;
+                        }
+
+                    }
+                );
+
+            } else {
+
+                message +=
+                    "\n\n⭐ Rating: No ratings yet";
+
+
+                message +=
+                    "\n📝 Reviews: No reviews yet";
+
+            }
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Details Error:",
+            error
+        );
+
+    }
+
+
+    alert(message);
 
 }
-
 
 
 /* ==================================================
@@ -663,9 +693,8 @@ function viewLocation(
 }
 
 
-
 /* ==================================================
-   FAVORITES - MONGODB
+   FAVORITES
 ================================================== */
 
 async function addFavorite(
@@ -701,8 +730,7 @@ async function addFavorite(
                 FAVORITE_API_URL,
                 {
 
-                    method:
-                        "POST",
+                    method: "POST",
 
                     headers: {
 
@@ -733,20 +761,16 @@ async function addFavorite(
         if (!response.ok) {
 
             throw new Error(
-
                 data.message ||
                 "Unable to add favorite"
-
             );
 
         }
 
 
         alert(
-
             businessName +
             " added to Favorites ❤️"
-
         );
 
     }
@@ -761,10 +785,8 @@ async function addFavorite(
 
 
         alert(
-
             "Favorite failed! ❌\n\n" +
             error.message
-
         );
 
     }
@@ -772,9 +794,8 @@ async function addFavorite(
 }
 
 
-
 /* ==================================================
-   RATING & REVIEW - MONGODB
+   SUBMIT REVIEW
 ================================================== */
 
 async function submitReview(
@@ -817,9 +838,7 @@ async function submitReview(
         reviewElement.value.trim();
 
 
-    if (
-        rating === ""
-    ) {
+    if (rating === "") {
 
         alert(
             "Please select a rating! ⭐"
@@ -830,9 +849,7 @@ async function submitReview(
     }
 
 
-    if (
-        review === ""
-    ) {
+    if (review === "") {
 
         alert(
             "Please write a review! ✍️"
@@ -872,8 +889,7 @@ async function submitReview(
                 REVIEW_API_URL,
                 {
 
-                    method:
-                        "POST",
+                    method: "POST",
 
                     headers: {
 
@@ -910,10 +926,8 @@ async function submitReview(
         if (!response.ok) {
 
             throw new Error(
-
                 data.message ||
                 "Review submission failed"
-
             );
 
         }
@@ -924,12 +938,14 @@ async function submitReview(
         );
 
 
-        ratingElement.value =
-            "";
+        ratingElement.value = "";
+
+        reviewElement.value = "";
 
 
-        reviewElement.value =
-            "";
+        /* REFRESH BUSINESSES */
+
+        await loadBusinesses();
 
     }
 
@@ -943,10 +959,8 @@ async function submitReview(
 
 
         alert(
-
             "Review failed! ❌\n\n" +
             error.message
-
         );
 
     }
@@ -954,31 +968,19 @@ async function submitReview(
 }
 
 
-
 /* ==================================================
    ESCAPE HTML
 ================================================== */
 
-function escapeHTML(
-    value
-) {
+function escapeHTML(value) {
 
     return String(value || "")
 
-        .replace(
-            /&/g,
-            "&amp;"
-        )
+        .replace(/&/g, "&amp;")
 
-        .replace(
-            /</g,
-            "&lt;"
-        )
+        .replace(/</g, "&lt;")
 
-        .replace(
-            />/g,
-            "&gt;"
-        )
+        .replace(/>/g, "&gt;")
 
         .replace(
             /"/g,
@@ -993,14 +995,11 @@ function escapeHTML(
 }
 
 
-
 /* ==================================================
    ESCAPE JAVASCRIPT
 ================================================== */
 
-function escapeJS(
-    value
-) {
+function escapeJS(value) {
 
     return String(value || "")
 
@@ -1026,10 +1025,4 @@ function escapeJS(
 
 }
 
-
 </script>
-
-
-</body>
-
-</html>
