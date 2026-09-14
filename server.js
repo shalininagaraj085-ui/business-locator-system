@@ -854,10 +854,8 @@ app.listen(
     PORT,
     "0.0.0.0",
     function () {
-
         console.log(
             `Business Locator Backend running on port ${PORT}`
         );
-
     }
 );
