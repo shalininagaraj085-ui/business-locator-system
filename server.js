@@ -4,11 +4,12 @@ const cors = require("cors");
 const path = require("path");
 const multer = require("multer");
 const fs = require("fs");
-require("dotenv").config();
 
 const Business = require("./businessmodel");
 const User = require("./userModel");
 const Review = require("./reviewmodel");
+
+require("dotenv").config();
 
 const app = express();
 
@@ -25,26 +26,16 @@ app.use(express.urlencoded({ extended: true }));
    FRONTEND
 ========================================= */
 
-// Frontend files are in the parent folder
-// s/
-// ├── index.html
-// ├── login.html
-// ├── register.html
-// ├── css/
-// └── images/
+// server.js and index.html are in the same folder
+app.use(express.static(__dirname));
 
-app.use(express.static(path.join(__dirname, "..")));
-
-// Home page
-app.get("/", (req, res) => {
-    res.sendFile(
-        path.join(__dirname, "..", "index.html")
-    );
+app.get("/", function (req, res) {
+    res.sendFile(path.join(__dirname, "index.html"));
 });
 
 
 /* =========================================
-   MONGODB CONNECTION
+   MONGODB
 ========================================= */
 
 const MONGODB_URI =
@@ -53,14 +44,11 @@ const MONGODB_URI =
 
 mongoose
     .connect(MONGODB_URI)
-    .then(() => {
+    .then(function () {
         console.log("MongoDB Connected Successfully! ✅");
     })
-    .catch((error) => {
-        console.error(
-            "MongoDB Connection Error:",
-            error.message
-        );
+    .catch(function (error) {
+        console.error("MongoDB Connection Error:", error);
     });
 
 
@@ -68,14 +56,8 @@ mongoose
    IMAGE UPLOAD
 ========================================= */
 
-// Images folder is in the parent project folder
-// s/
-// └── images/
-//     └── uploads/
-
 const uploadFolder = path.join(
     __dirname,
-    "..",
     "images",
     "uploads"
 );
@@ -86,22 +68,12 @@ if (!fs.existsSync(uploadFolder)) {
     });
 }
 
-
-/* =========================================
-   SERVE IMAGES
-========================================= */
-
 app.use(
     "/images",
     express.static(
-        path.join(__dirname, "..", "images")
+        path.join(__dirname, "images")
     )
 );
-
-
-/* =========================================
-   MULTER STORAGE
-========================================= */
 
 const storage = multer.diskStorage({
 
@@ -114,14 +86,13 @@ const storage = multer.diskStorage({
         const uniqueName =
             Date.now() +
             "-" +
-            Math.round(Math.random() * 1E9) +
+            Math.round(Math.random() * 1000000000) +
             path.extname(file.originalname);
 
         cb(null, uniqueName);
     }
 
 });
-
 
 const upload = multer({
 
@@ -132,11 +103,7 @@ const upload = multer({
         if (file.mimetype.startsWith("image/")) {
             cb(null, true);
         } else {
-            cb(
-                new Error(
-                    "Only image files are allowed"
-                )
-            );
+            cb(new Error("Only image files are allowed"));
         }
 
     },
@@ -152,129 +119,93 @@ const upload = multer({
    HEALTH CHECK
 ========================================= */
 
-app.get(
-    "/api/health",
-    function (req, res) {
+app.get("/api/health", function (req, res) {
 
-        res.json({
+    res.json({
+        message:
+            "Business Locator Backend is Running Successfully! 🚀",
 
-            message:
-                "Business Locator Backend is Running Successfully! 🚀",
+        status: "Online",
 
-            status:
-                "Online",
+        database:
+            mongoose.connection.readyState === 1
+                ? "Connected"
+                : "Disconnected"
+    });
 
-            database:
-                mongoose.connection.readyState === 1
-                    ? "Connected"
-                    : "Disconnected"
-
-        });
-
-    }
-);
+});
 
 
 /* =========================================
    USER REGISTER
 ========================================= */
 
-app.post(
-    "/api/users",
-    async function (req, res) {
+app.post("/api/users", async function (req, res) {
 
-        try {
+    try {
 
-            const {
-                name,
-                email,
-                password
-            } = req.body;
+        const {
+            name,
+            email,
+            password
+        } = req.body;
 
+        if (!name || !email || !password) {
 
-            if (
-                !name ||
-                !email ||
-                !password
-            ) {
-
-                return res.status(400).json({
-
-                    message:
-                        "Name, email and password are required"
-
-                });
-
-            }
-
-
-            const existingUser =
-                await User.findOne({
-                    email: email
-                });
-
-
-            if (existingUser) {
-
-                return res.status(400).json({
-
-                    message:
-                        "User already exists"
-
-                });
-
-            }
-
-
-            const user =
-                new User({
-
-                    name: name,
-
-                    email: email,
-
-                    password: password
-
-                });
-
-
-            await user.save();
-
-
-            res.status(201).json({
-
+            return res.status(400).json({
                 message:
-                    "Registration successful",
-
-                user:
-                    user
-
+                    "Name, email and password are required"
             });
 
         }
 
-        catch (error) {
+        const existingUser =
+            await User.findOne({
+                email: email
+            });
 
-            console.error(
-                "Register Error:",
-                error
-            );
+        if (existingUser) {
 
-
-            res.status(500).json({
-
+            return res.status(400).json({
                 message:
-                    "Error registering user",
-
-                error:
-                    error.message
-
+                    "User already exists"
             });
 
         }
+
+        const user = new User({
+            name: name,
+            email: email,
+            password: password
+        });
+
+        await user.save();
+
+        res.status(201).json({
+            message:
+                "Registration successful",
+
+            user: user
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Register Error:",
+            error
+        );
+
+        res.status(500).json({
+            message:
+                "Error registering user",
+
+            error:
+                error.message
+        });
 
     }
-);
+
+});
 
 
 /* =========================================
@@ -292,72 +223,51 @@ app.post(
                 password
             } = req.body;
 
-
-            if (
-                !email ||
-                !password
-            ) {
+            if (!email || !password) {
 
                 return res.status(400).json({
-
                     message:
                         "Email and password are required"
-
                 });
 
             }
 
-
             const user =
                 await User.findOne({
-
                     email: email,
-
                     password: password
-
                 });
-
 
             if (!user) {
 
                 return res.status(401).json({
-
                     message:
                         "Invalid email or password"
-
                 });
 
             }
 
-
             res.json({
-
                 message:
                     "Login successful",
 
                 user:
                     user
-
             });
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Login Error:",
                 error
             );
 
-
             res.status(500).json({
-
                 message:
                     "Error logging in",
 
                 error:
                     error.message
-
             });
 
         }
@@ -383,7 +293,6 @@ app.post(
                 email
             } = req.body;
 
-
             if (
                 !businessName ||
                 !rating ||
@@ -391,14 +300,11 @@ app.post(
             ) {
 
                 return res.status(400).json({
-
                     message:
                         "Business name, rating and review are required"
-
                 });
 
             }
-
 
             const newReview =
                 new Review({
@@ -417,9 +323,7 @@ app.post(
 
                 });
 
-
             await newReview.save();
-
 
             res.status(201).json({
 
@@ -431,15 +335,12 @@ app.post(
 
             });
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Review Error:",
                 error
             );
-
 
             res.status(500).json({
 
@@ -470,32 +371,23 @@ app.get(
             const businessName =
                 req.params.businessName;
 
-
             const reviews =
                 await Review.find({
-
                     businessName:
                         businessName
-
                 }).sort({
-
                     createdAt:
                         -1
-
                 });
-
 
             res.json(reviews);
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Get Reviews Error:",
                 error
             );
-
 
             res.status(500).json({
 
@@ -523,39 +415,19 @@ app.delete(
 
         try {
 
-            const reviewId =
-                req.params.id;
-
-
-            if (!reviewId) {
-
-                return res.status(400).json({
-
-                    message:
-                        "Review ID is required"
-
-                });
-
-            }
-
-
             const deletedReview =
                 await Review.findByIdAndDelete(
-                    reviewId
+                    req.params.id
                 );
-
 
             if (!deletedReview) {
 
                 return res.status(404).json({
-
                     message:
                         "Review not found"
-
                 });
 
             }
-
 
             res.json({
 
@@ -567,15 +439,12 @@ app.delete(
 
             });
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Delete Review Error:",
                 error
             );
-
 
             res.status(500).json({
 
@@ -606,18 +475,14 @@ app.get(
             const businesses =
                 await Business.find();
 
-
             res.json(businesses);
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Get Businesses Error:",
                 error
             );
-
 
             res.status(500).json({
 
@@ -650,30 +515,23 @@ app.get(
                     req.params.id
                 );
 
-
             if (!business) {
 
                 return res.status(404).json({
-
                     message:
                         "Business not found"
-
                 });
 
             }
 
-
             res.json(business);
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Get Business Error:",
                 error
             );
-
 
             res.status(500).json({
 
@@ -709,7 +567,6 @@ app.post(
                 phone
             } = req.body;
 
-
             if (
                 !name ||
                 !category ||
@@ -726,9 +583,7 @@ app.post(
 
             }
 
-
             let imagePath = "";
-
 
             if (req.file) {
 
@@ -737,7 +592,6 @@ app.post(
                     req.file.filename;
 
             }
-
 
             const business =
                 new Business({
@@ -759,9 +613,7 @@ app.post(
 
                 });
 
-
             await business.save();
-
 
             res.status(201).json({
 
@@ -773,15 +625,12 @@ app.post(
 
             });
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Add Business Error:",
                 error
             );
-
 
             res.status(500).json({
 
@@ -817,7 +666,6 @@ app.put(
                 phone
             } = req.body;
 
-
             const updateData = {
 
                 name:
@@ -834,7 +682,6 @@ app.put(
 
             };
 
-
             if (req.file) {
 
                 updateData.image =
@@ -842,7 +689,6 @@ app.put(
                     req.file.filename;
 
             }
-
 
             const business =
                 await Business.findByIdAndUpdate(
@@ -852,11 +698,11 @@ app.put(
                     updateData,
 
                     {
-                        new: true
+                        new: true,
+                        runValidators: true
                     }
 
                 );
-
 
             if (!business) {
 
@@ -869,7 +715,6 @@ app.put(
 
             }
 
-
             res.json({
 
                 message:
@@ -880,15 +725,12 @@ app.put(
 
             });
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Update Business Error:",
                 error
             );
-
 
             res.status(500).json({
 
@@ -921,7 +763,6 @@ app.delete(
                     req.params.id
                 );
 
-
             if (!business) {
 
                 return res.status(404).json({
@@ -933,7 +774,6 @@ app.delete(
 
             }
 
-
             res.json({
 
                 message:
@@ -944,15 +784,12 @@ app.delete(
 
             });
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Delete Business Error:",
                 error
             );
-
 
             res.status(500).json({
 
@@ -974,42 +811,36 @@ app.delete(
    MULTER / GENERAL ERROR HANDLER
 ========================================= */
 
-app.use(
-    function (error, req, res, next) {
+app.use(function (error, req, res, next) {
 
-        if (
-            error instanceof multer.MulterError
-        ) {
+    if (error instanceof multer.MulterError) {
 
-            return res.status(400).json({
+        return res.status(400).json({
 
-                message:
-                    "Image upload error",
+            message:
+                "Image upload error",
 
-                error:
-                    error.message
+            error:
+                error.message
 
-            });
-
-        }
-
-
-        if (error) {
-
-            return res.status(400).json({
-
-                message:
-                    error.message
-
-            });
-
-        }
-
-
-        next();
+        });
 
     }
-);
+
+    if (error) {
+
+        return res.status(400).json({
+
+            message:
+                error.message
+
+        });
+
+    }
+
+    next();
+
+});
 
 
 /* =========================================
@@ -1018,7 +849,6 @@ app.use(
 
 const PORT =
     process.env.PORT || 5000;
-
 
 app.listen(
     PORT,

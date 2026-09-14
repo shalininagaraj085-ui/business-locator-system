@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Search Business</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #222;
+        }
+
+        header {
+            background: #2563eb;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        nav {
+            margin-top: 15px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        main {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .search-box input {
+            width: 60%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #businessContainer {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(250px, 1fr)
+            );
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .business-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .business-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .details-box {
+            background: white;
+            padding: 25px;
+            margin-top: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .details-image {
+            width: 300px;
+            max-width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            background: #222;
+            color: white;
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<header>
+
+    <h1>Business Locator System</h1>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="business.html">Businesses</a>
+        <a href="search.html">Search</a>
+        <a href="login.html">Login</a>
+        <a href="register.html">Register</a>
+        <a href="contact.html">Contact</a>
+        <a href="admin.html">Admin Dashboard</a>
+    </nav>
+
+</header>
+
+
+<main>
+
+    <h2>Search Business</h2>
+
+    <div class="search-box">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search Business, Category or Location..."
+        >
+
+        <button
+            type="button"
+            onclick="searchBusiness()">
+
+            🔍 Search
+
+        </button>
+
+    </div>
+
+
+    <div id="businessContainer">
+
+        <p>Loading businesses... ⏳</p>
+
+    </div>
+
+
+    <div
+        id="detailsBox"
+        class="details-box"
+        style="display:none;">
+
+        <h2>🏪 Business Details</h2>
+
+        <img
+            id="detailImage"
+            class="details-image"
+            src=""
+            alt="Business Image"
+        >
+
+        <p>
+            <b>Business Name:</b>
+            <span id="detailName"></span>
+        </p>
+
+        <p>
+            <b>Category:</b>
+            <span id="detailCategory"></span>
+        </p>
+
+        <p>
+            <b>Location:</b>
+            <span id="detailLocation"></span>
+        </p>
+
+        <p>
+            <b>Phone:</b>
+            <span id="detailPhone"></span>
+        </p>
+
+        <p>
+            <b>Rating:</b>
+            <span id="detailRating">
+                No ratings yet
+            </span>
+        </p>
+
+        <h3>📝 Reviews</h3>
+
+        <div id="reviewList">
+            No reviews yet.
+        </div>
+
+        <br>
+
+        <button
+            type="button"
+            onclick="closeDetails()">
+
+            ❌ Close
+
+        </button>
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    © 2026 Business Locator System.
+    All Rights Reserved.
+
+</footer>
+
+
+<script>
+
+const API_URL = "http://localhost:5000/api";
+
+let businesses = [];
+
+let selectedBusiness = null;
+
+
+// ==========================================
+// LOAD BUSINESSES
+// ==========================================
+
+async function loadBusinesses() {
+
+    const container =
+        document.getElementById("businessContainer");
+
+    try {
+
+        const response =
+            await fetch(`${API_URL}/businesses`);
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Backend returned " +
+                response.status
+            );
+
+        }
+
+        businesses =
+            await response.json();
+
+        console.log(
+            "Businesses:",
+            businesses
+        );
+
+        displayBusinesses(
+            businesses
+        );
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        container.innerHTML = `
+            <div class="business-card">
+
+                <h3>❌ Backend Connection Error</h3>
+
+                <p>
+                    Backend is not responding.
+                </p>
+
+                <p>
+                    Make sure this is running:
+                </p>
+
+                <b>node server.js</b>
+
+            </div>
+        `;
+
+    }
+
+}
+
+
+// ==========================================
+// IMAGE
+// ==========================================
+
+function getBusinessImage(business) {
+
+    if (business.image) {
+
+        if (
+            business.image.startsWith("/")
+        ) {
+
+            return (
+                "http://localhost:5000" +
+                business.image
+            );
+
+        }
+
+        return business.image;
+
+    }
+
+
+    const category =
+        (business.category || "")
+        .toLowerCase();
+
+
+    if (category.includes("hospital")) {
+
+        return "images/hospital.png.png";
+
+    }
+
+
+    if (category.includes("hotel")) {
+
+        return "images/hotel.jpg.png";
+
+    }
+
+
+    if (
+        category.includes("restaurant") ||
+        category.includes("food") ||
+        category.includes("bakery")
+    ) {
+
+        return "images/restaurant.jpg.png";
+
+    }
+
+
+    if (
+        category.includes("supermarket") ||
+        category.includes("market") ||
+        category.includes("shopping")
+    ) {
+
+        return "images/supermarket.jpg.png";
+
+    }
+
+
+    if (
+        category.includes("medical") ||
+        category.includes("clinic") ||
+        category.includes("pharmacy")
+    ) {
+
+        return "images/medical.jpg";
+
+    }
+
+
+    return "images/medical.jpg";
+
+}
+
+
+// ==========================================
+// DISPLAY
+// ==========================================
+
+function displayBusinesses(list) {
+
+    const container =
+        document.getElementById(
+            "businessContainer"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (
+        !list ||
+        list.length === 0
+    ) {
+
+        container.innerHTML =
+            "<p>❌ No businesses found.</p>";
+
+        return;
+
+    }
+
+
+    list.forEach(function (business) {
+
+        const card =
+            document.createElement("div");
+
+
+        card.className =
+            "business-card";
+
+
+        card.innerHTML = `
+
+            <img
+                src="${getBusinessImage(business)}"
+                class="business-image"
+                alt="Business"
+                onerror="this.style.display='none'"
+            >
+
+            <h3>
+                ${business.name || ""}
+            </h3>
+
+            <p>
+                <b>Category:</b>
+                ${business.category || ""}
+            </p>
+
+            <p>
+                <b>Location:</b>
+                ${business.location || ""}
+            </p>
+
+            <p>
+                <b>Phone:</b>
+                ${business.phone || ""}
+            </p>
+
+            <button
+                onclick="showDetails('${business._id}')">
+
+                View Details
+
+            </button>
+
+        `;
+
+
+        container.appendChild(card);
+
+    });
+
+}
+
+
+// ==========================================
+// SEARCH
+// ==========================================
+
+function searchBusiness() {
+
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    const search =
+        input.value
+        .toLowerCase()
+        .trim();
+
+
+    if (!search) {
+
+        displayBusinesses(
+            businesses
+        );
+
+        return;
+
+    }
+
+
+    const filtered =
+        businesses.filter(
+            function (business) {
+
+                const name =
+                    (
+                        business.name || ""
+                    ).toLowerCase();
+
+
+                const category =
+                    (
+                        business.category || ""
+                    ).toLowerCase();
+
+
+                const location =
+                    (
+                        business.location || ""
+                    ).toLowerCase();
+
+
+                return (
+                    name.includes(search) ||
+                    category.includes(search) ||
+                    location.includes(search)
+                );
+
+            }
+        );
+
+
+    displayBusinesses(
+        filtered
+    );
+
+}
+
+
+// ==========================================
+// DETAILS
+// ==========================================
+
+async function showDetails(id) {
+
+    selectedBusiness =
+        businesses.find(
+            function (business) {
+
+                return business._id === id;
+
+            }
+        );
+
+
+    if (!selectedBusiness) {
+
+        alert(
+            "Business not found."
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "detailImage"
+    ).src =
+        getBusinessImage(
+            selectedBusiness
+        );
+
+
+    document.getElementById(
+        "detailName"
+    ).textContent =
+        selectedBusiness.name || "";
+
+
+    document.getElementById(
+        "detailCategory"
+    ).textContent =
+        selectedBusiness.category || "";
+
+
+    document.getElementById(
+        "detailLocation"
+    ).textContent =
+        selectedBusiness.location || "";
+
+
+    document.getElementById(
+        "detailPhone"
+    ).textContent =
+        selectedBusiness.phone || "";
+
+
+    document.getElementById(
+        "detailsBox"
+    ).style.display =
+        "block";
+
+
+    loadReviews(
+        selectedBusiness.name
+    );
+
+}
+
+
+// ==========================================
+// REVIEWS
+// ==========================================
+
+async function loadReviews(
+    businessName
+) {
+
+    const reviewList =
+        document.getElementById(
+            "reviewList"
+        );
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/reviews/` +
+                encodeURIComponent(
+                    businessName
+                )
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Review request failed"
+            );
+
+        }
+
+
+        const reviews =
+            await response.json();
+
+
+        if (
+            !Array.isArray(reviews) ||
+            reviews.length === 0
+        ) {
+
+            reviewList.innerHTML =
+                "<p>No reviews yet.</p>";
+
+            return;
+
+        }
+
+
+        reviewList.innerHTML = "";
+
+
+        let total = 0;
+
+
+        reviews.forEach(
+            function (review) {
+
+                total +=
+                    Number(
+                        review.rating
+                    );
+
+
+                const p =
+                    document.createElement(
+                        "p"
+                    );
+
+
+                p.textContent =
+                    "⭐ " +
+                    review.rating +
+                    " - " +
+                    review.review;
+
+
+                reviewList.appendChild(
+                    p
+                );
+
+            }
+        );
+
+
+        const average =
+            (
+                total /
+                reviews.length
+            ).toFixed(1);
+
+
+        document.getElementById(
+            "detailRating"
+        ).textContent =
+            "⭐ " +
+            average +
+            " / 5";
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        reviewList.innerHTML =
+            "<p>Reviews unavailable.</p>";
+
+    }
+
+}
+
+
+// ==========================================
+// CLOSE
+// ==========================================
+
+function closeDetails() {
+
+    document.getElementById(
+        "detailsBox"
+    ).style.display =
+        "none";
+
+}
+
+
+// ==========================================
+// START
+// ==========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const searchInput =
+            document.getElementById(
+                "searchInput"
+            );
+
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        searchBusiness();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        loadBusinesses();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
