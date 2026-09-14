@@ -38,7 +38,7 @@ app.use(
 
 // server.js is in project root
 app.use(
-    express.static(path.join(__dirname, ".."))
+    express.static(__dirname)
 );
 
 
