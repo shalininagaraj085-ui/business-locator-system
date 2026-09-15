@@ -317,78 +317,41 @@ function getBusinessImage(business) {
 
     if (business.image) {
 
-        if (
-            business.image.startsWith("/")
-        ) {
-
-            return (
-    "https://business-locator-system.onrender.com" +
-    business.image
-);
-
+        if (business.image.startsWith("/")) {
+            return "https://business-locator-system.onrender.com" + business.image;
         }
 
-        return business.image;
-
+        return "https://business-locator-system.onrender.com/" + business.image;
     }
 
+    const category = (business.category || "").toLowerCase();
 
-    const category =
-        (business.category || "")
-        .toLowerCase();
-
-
-    if (category.includes("hospital")) {
-
-        return "images/hospital.png.png";
-
+    if (category.includes("restaurant") || category.includes("food")) {
+        return "https://business-locator-system.onrender.com/images/restaurant.jpg.png";
     }
 
+    if (category.includes("bakery")) {
+        return "https://business-locator-system.onrender.com/images/bakery.jpg.png";
+    }
 
     if (category.includes("hotel")) {
-
-        return "images/hotel.jpg.png";
-
+        return "https://business-locator-system.onrender.com/images/hotel.jpg.png";
     }
 
-
-    if (
-        category.includes("restaurant") ||
-        category.includes("food") ||
-        category.includes("bakery")
-    ) {
-
-        return "images/restaurant.jpg.png";
-
+    if (category.includes("shopping")) {
+        return "https://business-locator-system.onrender.com/images/shoppingmall.jpg.png";
     }
 
-
-    if (
-        category.includes("supermarket") ||
-        category.includes("market") ||
-        category.includes("shopping")
-    ) {
-
-        return "images/supermarket.jpg.png";
-
+    if (category.includes("supermarket") || category.includes("market")) {
+        return "https://business-locator-system.onrender.com/images/supermarket.jpg.png";
     }
 
-
-    if (
-        category.includes("medical") ||
-        category.includes("clinic") ||
-        category.includes("pharmacy")
-    ) {
-
-        return "images/medical.jpg";
-
+    if (category.includes("hospital") || category.includes("medical")) {
+        return "https://business-locator-system.onrender.com/images/medical.jpg";
     }
 
-
-    return "images/medical.jpg";
-
+    return "https://business-locator-system.onrender.com/images/medical.jpg";
 }
-
 
 // ==========================================
 // DISPLAY
