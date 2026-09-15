@@ -312,9 +312,56 @@ async function loadBusinesses() {
 // ==========================================
 // IMAGE
 // ==========================================
-
 function getBusinessImage(business) {
 
+    const category = (business.category || "").toLowerCase();
+
+    // Hospital
+    if (category.includes("hospital")) {
+        return "https://business-locator-system.onrender.com/images/hospital.png.png";
+    }
+
+    // Medical
+    if (
+        category.includes("medical") ||
+        category.includes("clinic") ||
+        category.includes("pharmacy")
+    ) {
+        return "https://business-locator-system.onrender.com/images/medical.jpg";
+    }
+
+    // Restaurant / Food
+    if (
+        category.includes("restaurant") ||
+        category.includes("food")
+    ) {
+        return "https://business-locator-system.onrender.com/images/restaurant.jpg.png";
+    }
+
+    // Bakery
+    if (category.includes("bakery")) {
+        return "https://business-locator-system.onrender.com/images/bakery.jpg.png";
+    }
+
+    // Hotel
+    if (category.includes("hotel")) {
+        return "https://business-locator-system.onrender.com/images/hotel.jpg.png";
+    }
+
+    // Shopping Mall
+    if (category.includes("shopping")) {
+        return "https://business-locator-system.onrender.com/images/shoppingmall.jpg.png";
+    }
+
+    // Supermarket
+    if (
+        category.includes("supermarket") ||
+        category.includes("market")
+    ) {
+        return "https://business-locator-system.onrender.com/images/supermarket.jpg.png";
+    }
+
+    // If category doesn't match, use database image
     if (business.image) {
 
         if (business.image.startsWith("/")) {
@@ -324,35 +371,9 @@ function getBusinessImage(business) {
         return "https://business-locator-system.onrender.com/" + business.image;
     }
 
-    const category = (business.category || "").toLowerCase();
-
-    if (category.includes("restaurant") || category.includes("food")) {
-        return "https://business-locator-system.onrender.com/images/restaurant.jpg.png";
-    }
-
-    if (category.includes("bakery")) {
-        return "https://business-locator-system.onrender.com/images/bakery.jpg.png";
-    }
-
-    if (category.includes("hotel")) {
-        return "https://business-locator-system.onrender.com/images/hotel.jpg.png";
-    }
-
-    if (category.includes("shopping")) {
-        return "https://business-locator-system.onrender.com/images/shoppingmall.jpg.png";
-    }
-
-    if (category.includes("supermarket") || category.includes("market")) {
-        return "https://business-locator-system.onrender.com/images/supermarket.jpg.png";
-    }
-
-    if (category.includes("hospital") || category.includes("medical")) {
-        return "https://business-locator-system.onrender.com/images/medical.jpg";
-    }
-
+    // Default image
     return "https://business-locator-system.onrender.com/images/medical.jpg";
 }
-
 // ==========================================
 // DISPLAY
 // ==========================================
