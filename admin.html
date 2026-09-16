@@ -526,20 +526,8 @@ async function displayBusinesses() {
                     when no uploaded image exists.
                 */
 
-                const image =
-                    business.image
-                        ? (
-                            business.image.startsWith("http")
-                                ? business.image
-                                : (
-                                    business.image.startsWith("/")
-                                        ? business.image
-                                        : "/" + business.image
-                                )
-                          )
-                        : getCategoryImage(
-                            business.category
-                          );
+
+const image = getCategoryImage(business.category);
 
 
                 card.innerHTML = `
