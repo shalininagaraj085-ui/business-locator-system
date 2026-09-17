@@ -8,6 +8,7 @@ const fs = require("fs");
 const Business = require("./businessmodel");
 const User = require("./userModel");
 const Review = require("./reviewmodel");
+const Chat = require("./chatmodel");
 
 require("dotenv").config();
 
@@ -805,7 +806,79 @@ app.delete(
 
     }
 );
+/* =========================================
+   LIVE CHAT
+========================================= */
 
+// GET chat messages for a business
+app.get("/api/chats/:businessName", async function (req, res) {
+    try {
+
+        const chats = await Chat.find({
+            businessName: req.params.businessName
+        }).sort({
+            createdAt: 1
+        });
+
+        res.json(chats);
+
+    } catch (error) {
+
+        console.error("Chat fetch error:", error);
+
+        res.status(500).json({
+            message: "Failed to fetch chat messages"
+        });
+
+    }
+});
+
+
+// SEND chat message
+app.post("/api/chats", async function (req, res) {
+    try {
+
+        const {
+            userName,
+            businessName,
+            message,
+            sender
+        } = req.body;
+
+        if (!userName || !businessName || !message) {
+
+            return res.status(400).json({
+                message: "All fields are required"
+            });
+
+        }
+
+        const newChat = new Chat({
+
+            userName: userName,
+
+            businessName: businessName,
+
+            message: message,
+
+            sender: sender || "user"
+
+        });
+
+        await newChat.save();
+
+        res.status(201).json(newChat);
+
+    } catch (error) {
+
+        console.error("Chat send error:", error);
+
+        res.status(500).json({
+            message: "Failed to send message"
+        });
+
+    }
+});
 
 /* =========================================
    MULTER / GENERAL ERROR HANDLER
