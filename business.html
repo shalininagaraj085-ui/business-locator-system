@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -6,8 +7,9 @@
 <meta charset="UTF-8">
 
 <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+
 >
 
 <title>
@@ -31,33 +33,35 @@
 
 <nav>
 
-    <a href="index.html">
-        Home
-    </a>
+```
+<a href="index.html">
+    Home
+</a>
 
-    <a href="business.html">
-        Businesses
-    </a>
+<a href="business.html">
+    Businesses
+</a>
 
-    <a href="search.html">
-        Search
-    </a>
+<a href="search.html">
+    Search
+</a>
 
-    <a href="login.html">
-        Login
-    </a>
+<a href="login.html">
+    Login
+</a>
 
-    <a href="register.html">
-        Register
-    </a>
+<a href="register.html">
+    Register
+</a>
 
-    <a href="contact.html">
-        Contact
-    </a>
+<a href="contact.html">
+    Contact
+</a>
 
-    <a href="admin.html">
-        Admin
-    </a>
+<a href="admin.html">
+    Admin
+</a>
+```
 
 </nav>
 
@@ -69,14 +73,85 @@
     Available Businesses
 </h2>
 
+<!-- =========================================
+     PRICE COMPARISON
+========================================= -->
+
+<div
+    style="
+        background:white;
+        padding:20px;
+        margin-bottom:25px;
+        border-radius:12px;
+        box-shadow:0 3px 12px rgba(0,0,0,0.12);
+    "
+>
+
+```
+<h2>
+    💰 Price Comparison
+</h2>
+
+<p>
+    Select a service to compare prices between businesses.
+</p>
+
+
+<select
+    id="serviceSelect"
+    style="
+        width:100%;
+        max-width:500px;
+        padding:12px;
+        margin-top:10px;
+        border:1px solid #ccc;
+        border-radius:6px;
+    "
+>
+
+    <option value="">
+        Select a service
+    </option>
+
+</select>
+
+
+<button
+    type="button"
+    onclick="comparePrices()"
+    style="
+        display:block;
+        margin-top:12px;
+        padding:10px 18px;
+        cursor:pointer;
+    "
+>
+
+    🔍 Compare Prices
+
+</button>
+
+
+<div
+    id="priceComparisonResult"
+    style="
+        margin-top:20px;
+    "
+></div>
+```
+
+</div>
+
 <div
     class="business-container"
     id="businessContainer"
 >
 
-    <p>
-        Loading businesses from MongoDB... ⏳
-    </p>
+```
+<p>
+    Loading businesses from MongoDB... ⏳
+</p>
+```
 
 </div>
 
@@ -90,7 +165,6 @@
 </p>
 
 </footer>
-
 
 <!-- =========================================
      LIVE CHAT WINDOW
@@ -113,104 +187,105 @@
     "
 >
 
-    <div
+```
+<div
+    style="
+        background:#333;
+        color:white;
+        padding:12px;
+        border-radius:12px 12px 0 0;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+    "
+>
+
+    <strong id="chatBusinessName">
+        💬 Business Chat
+    </strong>
+
+    <button
+        type="button"
+        onclick="closeChat()"
         style="
-            background:#333;
+            background:none;
+            border:none;
             color:white;
-            padding:12px;
-            border-radius:12px 12px 0 0;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
+            font-size:20px;
+            cursor:pointer;
         "
     >
-
-        <strong id="chatBusinessName">
-            💬 Business Chat
-        </strong>
-
-        <button
-            type="button"
-            onclick="closeChat()"
-            style="
-                background:none;
-                border:none;
-                color:white;
-                font-size:20px;
-                cursor:pointer;
-            "
-        >
-            ✕
-        </button>
-
-    </div>
-
-
-    <div
-        id="chatMessages"
-        style="
-            height:280px;
-            overflow-y:auto;
-            padding:10px;
-            background:#f7f7f7;
-        "
-    >
-
-        <p>
-            No messages yet.
-        </p>
-
-    </div>
-
-
-    <div style="padding:10px 10px 0 10px;">
-
-        <input
-            type="text"
-            id="chatUserName"
-            placeholder="Enter your name"
-            style="
-                width:100%;
-                padding:8px;
-                box-sizing:border-box;
-            "
-        >
-
-    </div>
-
-
-    <div style="padding:10px;">
-
-        <textarea
-            id="chatMessageInput"
-            placeholder="Type your message..."
-            rows="3"
-            style="
-                width:100%;
-                padding:8px;
-                box-sizing:border-box;
-                resize:none;
-            "
-        ></textarea>
-
-
-        <button
-            type="button"
-            onclick="sendChatMessage()"
-            style="
-                width:100%;
-                margin-top:8px;
-                padding:10px;
-                cursor:pointer;
-            "
-        >
-            📤 Send
-        </button>
-
-    </div>
+        ✕
+    </button>
 
 </div>
 
+
+<div
+    id="chatMessages"
+    style="
+        height:280px;
+        overflow-y:auto;
+        padding:10px;
+        background:#f7f7f7;
+    "
+>
+
+    <p>
+        No messages yet.
+    </p>
+
+</div>
+
+
+<div style="padding:10px 10px 0 10px;">
+
+    <input
+        type="text"
+        id="chatUserName"
+        placeholder="Enter your name"
+        style="
+            width:100%;
+            padding:8px;
+            box-sizing:border-box;
+        "
+    >
+
+</div>
+
+
+<div style="padding:10px;">
+
+    <textarea
+        id="chatMessageInput"
+        placeholder="Type your message..."
+        rows="3"
+        style="
+            width:100%;
+            padding:8px;
+            box-sizing:border-box;
+            resize:none;
+        "
+    ></textarea>
+
+
+    <button
+        type="button"
+        onclick="sendChatMessage()"
+        style="
+            width:100%;
+            margin-top:8px;
+            padding:10px;
+            cursor:pointer;
+        "
+    >
+        📤 Send
+    </button>
+
+</div>
+```
+
+</div>
 
 <script>
 
@@ -225,6 +300,17 @@ const API_URL =
 
 const REVIEW_API_URL =
     "https://business-locator-system.onrender.com/api/reviews";
+
+
+const CHAT_API_URL =
+    "https://business-locator-system.onrender.com/api/chats";
+
+
+/* ==================================================
+   GLOBAL BUSINESS DATA
+================================================== */
+
+let allBusinesses = [];
 
 
 /* ==================================================
@@ -279,6 +365,15 @@ async function loadBusinesses() {
         }
 
 
+        allBusinesses =
+            businesses;
+
+
+        populateServiceSelect(
+            businesses
+        );
+
+
         displayBusinesses(
             businesses
         );
@@ -319,6 +414,366 @@ async function loadBusinesses() {
 
 
 /* ==================================================
+   POPULATE SERVICE SELECT
+================================================== */
+
+function populateServiceSelect(
+    businesses
+) {
+
+    const select =
+        document.getElementById(
+            "serviceSelect"
+        );
+
+
+    if (!select) {
+
+        return;
+
+    }
+
+
+    select.innerHTML = `
+
+        <option value="">
+            Select a service
+        </option>
+
+    `;
+
+
+    const serviceNames =
+        new Set();
+
+
+    businesses.forEach(
+        function(business) {
+
+            if (
+                !Array.isArray(
+                    business.services
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            business.services.forEach(
+                function(service) {
+
+                    if (
+                        service &&
+                        service.name &&
+                        String(service.name).trim()
+                    ) {
+
+                        serviceNames.add(
+                            String(service.name).trim()
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+    Array.from(serviceNames)
+        .sort()
+        .forEach(
+            function(serviceName) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    serviceName;
+
+
+                option.textContent =
+                    serviceName;
+
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+}
+
+
+/* ==================================================
+   PRICE COMPARISON
+================================================== */
+
+function comparePrices() {
+
+    const select =
+        document.getElementById(
+            "serviceSelect"
+        );
+
+
+    const result =
+        document.getElementById(
+            "priceComparisonResult"
+        );
+
+
+    if (!select || !result) {
+
+        return;
+
+    }
+
+
+    const selectedService =
+        select.value.trim();
+
+
+    if (!selectedService) {
+
+        result.innerHTML = `
+
+            <p>
+                ⚠️ Please select a service first.
+            </p>
+
+        `;
+
+        return;
+
+    }
+
+
+    const comparisonData = [];
+
+
+    allBusinesses.forEach(
+        function(business) {
+
+            if (
+                !Array.isArray(
+                    business.services
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            business.services.forEach(
+                function(service) {
+
+                    if (
+                        service &&
+                        String(service.name)
+                            .trim()
+                            .toLowerCase() ===
+                        selectedService
+                            .trim()
+                            .toLowerCase()
+                    ) {
+
+                        comparisonData.push({
+
+                            business:
+                                business.name,
+
+                            location:
+                                business.location,
+
+                            price:
+                                Number(service.price) || 0
+
+                        });
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+    if (
+        comparisonData.length === 0
+    ) {
+
+        result.innerHTML = `
+
+            <div
+                style="
+                    padding:15px;
+                    border:1px solid #ddd;
+                    border-radius:8px;
+                "
+            >
+
+                <p>
+                    No price information available for
+                    <b>${escapeHTML(selectedService)}</b>.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    comparisonData.sort(
+        function(a, b) {
+
+            return a.price - b.price;
+
+        }
+    );
+
+
+    let tableHTML = `
+
+        <h3>
+            💰 Price Comparison: ${escapeHTML(selectedService)}
+        </h3>
+
+        <div
+            style="
+                overflow-x:auto;
+            "
+        >
+
+            <table
+                style="
+                    width:100%;
+                    border-collapse:collapse;
+                    margin-top:15px;
+                "
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th
+                            style="
+                                border:1px solid #ddd;
+                                padding:10px;
+                                text-align:left;
+                            "
+                        >
+                            Business
+                        </th>
+
+                        <th
+                            style="
+                                border:1px solid #ddd;
+                                padding:10px;
+                                text-align:left;
+                            "
+                        >
+                            Location
+                        </th>
+
+                        <th
+                            style="
+                                border:1px solid #ddd;
+                                padding:10px;
+                                text-align:left;
+                            "
+                        >
+                            Price
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+    `;
+
+
+    comparisonData.forEach(
+        function(item) {
+
+            tableHTML += `
+
+                <tr>
+
+                    <td
+                        style="
+                            border:1px solid #ddd;
+                            padding:10px;
+                        "
+                    >
+                        🏢
+                        ${escapeHTML(
+                            item.business
+                        )}
+                    </td>
+
+                    <td
+                        style="
+                            border:1px solid #ddd;
+                            padding:10px;
+                        "
+                    >
+                        📍
+                        ${escapeHTML(
+                            item.location
+                        )}
+                    </td>
+
+                    <td
+                        style="
+                            border:1px solid #ddd;
+                            padding:10px;
+                            font-weight:bold;
+                        "
+                    >
+                        ₹${item.price}
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+
+    tableHTML += `
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    `;
+
+
+    result.innerHTML =
+        tableHTML;
+
+}
+
+
+/* ==================================================
    LIVE OPEN / CLOSED STATUS
 ================================================== */
 
@@ -327,14 +782,11 @@ function getBusinessStatus(
     closingTime
 ) {
 
-    if (!openingTime || !closingTime) {
+    openingTime =
+        openingTime || "09:00";
 
-        return {
-            text: "⚪ Status unavailable",
-            isOpen: false
-        };
-
-    }
+    closingTime =
+        closingTime || "21:00";
 
 
     const now = new Date();
@@ -401,11 +853,6 @@ function getBusinessStatus(
     let isOpen;
 
 
-    /*
-       Normal business hours
-       Example: 09:00 - 21:00
-    */
-
     if (
         openingMinutes <
         closingMinutes
@@ -418,12 +865,6 @@ function getBusinessStatus(
                 closingMinutes;
 
     }
-
-
-    /*
-       Overnight business hours
-       Example: 18:00 - 02:00
-    */
 
     else {
 
@@ -506,8 +947,8 @@ function displayBusinesses(
 
             const status =
                 getBusinessStatus(
-                    business.openingTime,
-                    business.closingTime
+                    business.openingTime || "09:00",
+                    business.closingTime || "21:00"
                 );
 
 
@@ -521,9 +962,85 @@ function displayBusinesses(
                 "business-card";
 
 
-            card.innerHTML = `
+            let servicesHTML = "";
 
-                <!-- BUSINESS IMAGE -->
+
+            if (
+                Array.isArray(
+                    business.services
+                ) &&
+                business.services.length > 0
+            ) {
+
+                servicesHTML = `
+
+                    <div
+                        style="
+                            margin-top:15px;
+                            padding:12px;
+                            border:1px solid #ddd;
+                            border-radius:8px;
+                            background:#fafafa;
+                        "
+                    >
+
+                        <h4>
+                            💰 Services & Prices
+                        </h4>
+
+                `;
+
+
+                business.services.forEach(
+                    function(service) {
+
+                        if (
+                            service &&
+                            service.name
+                        ) {
+
+                            servicesHTML += `
+
+                                <p
+                                    style="
+                                        margin:8px 0;
+                                    "
+                                >
+
+                                    <b>
+                                        ${escapeHTML(
+                                            service.name
+                                        )}
+                                    </b>
+
+                                    :
+
+                                    <span>
+                                        ₹${Number(
+                                            service.price
+                                        ) || 0}
+                                    </span>
+
+                                </p>
+
+                            `;
+
+                        }
+
+                    }
+                );
+
+
+                servicesHTML += `
+
+                    </div>
+
+                `;
+
+            }
+
+
+            card.innerHTML = `
 
                 ${
                     image
@@ -555,8 +1072,6 @@ function displayBusinesses(
                 }
 
 
-                <!-- BUSINESS NAME -->
-
                 <h3>
 
                     🏪
@@ -566,8 +1081,6 @@ function displayBusinesses(
 
                 </h3>
 
-
-                <!-- CATEGORY -->
 
                 <p>
 
@@ -580,8 +1093,6 @@ function displayBusinesses(
                 </p>
 
 
-                <!-- LOCATION -->
-
                 <p>
 
                     <b>Location:</b>
@@ -593,8 +1104,6 @@ function displayBusinesses(
                 </p>
 
 
-                <!-- PHONE -->
-
                 <p>
 
                     <b>Phone:</b>
@@ -605,8 +1114,6 @@ function displayBusinesses(
 
                 </p>
 
-
-                <!-- OPENING TIME -->
 
                 <p>
 
@@ -620,8 +1127,6 @@ function displayBusinesses(
                 </p>
 
 
-                <!-- CLOSING TIME -->
-
                 <p>
 
                     <b>Closing Time:</b>
@@ -633,8 +1138,6 @@ function displayBusinesses(
 
                 </p>
 
-
-                <!-- LIVE STATUS -->
 
                 <p
                     style="
@@ -649,8 +1152,6 @@ function displayBusinesses(
                 </p>
 
 
-                <!-- RATING -->
-
                 <p>
 
                     ⭐⭐⭐⭐
@@ -658,7 +1159,8 @@ function displayBusinesses(
                 </p>
 
 
-                <!-- VIEW DETAILS -->
+                ${servicesHTML}
+
 
                 <button
                     type="button"
@@ -686,8 +1188,6 @@ function displayBusinesses(
                 </button>
 
 
-                <!-- GOOGLE MAPS -->
-
                 <button
                     type="button"
                     onclick="viewLocation(
@@ -705,8 +1205,6 @@ function displayBusinesses(
                 </button>
 
 
-                <!-- CHAT -->
-
                 <button
                     type="button"
                     onclick="openChat(
@@ -720,8 +1218,6 @@ function displayBusinesses(
 
                 </button>
 
-
-                <!-- REVIEW -->
 
                 <div class="review-box">
 
@@ -740,26 +1236,21 @@ function displayBusinesses(
                             Select Rating
                         </option>
 
-
                         <option value="1">
                             ⭐
                         </option>
-
 
                         <option value="2">
                             ⭐⭐
                         </option>
 
-
                         <option value="3">
                             ⭐⭐⭐
                         </option>
 
-
                         <option value="4">
                             ⭐⭐⭐⭐
                         </option>
-
 
                         <option value="5">
                             ⭐⭐⭐⭐⭐
@@ -773,1106 +1264,1119 @@ function displayBusinesses(
                         placeholder="Write your review"
                     ></textarea>
 
+```
+                <button
+                    type="button"
+                    onclick="submitReview(
+                        'rating${index}',
+                        'review${index}',
+                        '${escapeJS(
+                            business.name
+                        )}'
+                    )"
+                >
 
-                    <button
-                        type="button"
-                        onclick="submitReview(
-                            'rating${index}',
-                            'review${index}',
-                            '${escapeJS(
-                                business.name
-                            )}'
-                        )"
-                    >
+                    ⭐ Submit Review
 
-                        ⭐ Submit Review
-
-                    </button>
+                </button>
 
 
-                    <!-- EXISTING REVIEWS -->
+                <div
+                    id="reviews${index}"
+                    style="
+                        margin-top:20px;
+                    "
+                >
 
-                    <div
-                        id="reviews${index}"
-                        style="
-                            margin-top:20px;
-                        "
-                    >
-
-                        <p>
-                            Loading reviews... ⏳
-                        </p>
-
-                    </div>
+                    <p>
+                        Loading reviews... ⏳
+                    </p>
 
                 </div>
 
-            `;
+            </div>
+
+        `;
 
 
-            container.appendChild(
-                card
-            );
+        container.appendChild(
+            card
+        );
 
 
-            /* LOAD REVIEWS */
+        loadReviews(
+            business.name,
+            "reviews" + index
+        );
 
-            loadReviews(
-                business.name,
-                "reviews" + index
-            );
-
-        }
-    );
+    }
+);
+```
 
 }
-
 
 /* ==================================================
 CATEGORY IMAGE
 ================================================== */
 
 function getCategoryImage(
-    category
+category
 ) {
 
-    const value =
-        String(category || "")
-            .toLowerCase()
-            .trim();
+```
+const value =
+    String(category || "")
+        .toLowerCase()
+        .trim();
 
 
-    if (
-        value === "shopping mall" ||
-        value === "shoppingmall" ||
-        value === "shopping" ||
-        value === "mall" ||
-        value.includes("shopping")
-    ) {
+if (
+    value === "shopping mall" ||
+    value === "shoppingmall" ||
+    value === "shopping" ||
+    value === "mall" ||
+    value.includes("shopping")
+) {
 
-        return "images/shoppingmall.jpg.png";
-
-    }
-
-
-    if (
-        value === "bakery" ||
-        value.includes("bakery")
-    ) {
-
-        return "images/bakery.jpg.png";
-
-    }
-
-
-    if (
-        value === "hospital" ||
-        value.includes("hospital")
-    ) {
-
-        return "images/hospital.png.png";
-
-    }
-
-
-    if (
-        value === "hotel" ||
-        value.includes("hotel")
-    ) {
-
-        return "images/hotel.jpg.png";
-
-    }
-
-
-    if (
-        value === "college" ||
-        value.includes("college")
-    ) {
-
-        return "images/college.jpg.png";
-
-    }
-
-
-    if (
-        value === "medical" ||
-        value === "medical center" ||
-        value === "medical centre" ||
-        value.includes("medical")
-    ) {
-
-        return "images/medical.jpg";
-
-    }
-
-
-    if (
-        value === "restaurant" ||
-        value === "food" ||
-        value === "food shop" ||
-        value === "foodshop" ||
-        value.includes("restaurant") ||
-        value.includes("food")
-    ) {
-
-        return "images/restaurant.jpg.png";
-
-    }
-
-
-    if (
-        value === "supermarket" ||
-        value === "super market" ||
-        value === "market" ||
-        value.includes("supermarket")
-    ) {
-
-        return "images/supermarket.jpg.png";
-
-    }
-
-
-    return "";
+    return "images/shoppingmall.jpg.png";
 
 }
 
+
+if (
+    value === "bakery" ||
+    value.includes("bakery")
+) {
+
+    return "images/bakery.jpg.png";
+
+}
+
+
+if (
+    value === "hospital" ||
+    value.includes("hospital")
+) {
+
+    return "images/hospital.png.png";
+
+}
+
+
+if (
+    value === "hotel" ||
+    value.includes("hotel")
+) {
+
+    return "images/hotel.jpg.png";
+
+}
+
+
+if (
+    value === "college" ||
+    value.includes("college")
+) {
+
+    return "images/college.jpg.png";
+
+}
+
+
+if (
+    value === "medical" ||
+    value === "medical center" ||
+    value === "medical centre" ||
+    value.includes("medical")
+) {
+
+    return "images/medical.jpg";
+
+}
+
+
+if (
+    value === "restaurant" ||
+    value === "food" ||
+    value === "food shop" ||
+    value === "foodshop" ||
+    value.includes("restaurant") ||
+    value.includes("food")
+) {
+
+    return "images/restaurant.jpg.png";
+
+}
+
+
+if (
+    value === "supermarket" ||
+    value === "super market" ||
+    value === "market" ||
+    value.includes("supermarket")
+) {
+
+    return "images/supermarket.jpg.png";
+
+}
+
+
+return "";
+```
+
+}
 
 /* ==================================================
 VIEW DETAILS
 ================================================== */
 
 function viewDetails(
-    name,
-    location,
-    phone,
-    openingTime,
-    closingTime
+name,
+location,
+phone,
+openingTime,
+closingTime
 ) {
 
-    const status =
-        getBusinessStatus(
-            openingTime,
-            closingTime
-        );
-
-
-    alert(
-
-        "Business Name: " +
-        name +
-
-        "\n\nLocation: " +
-        location +
-
-        "\n\nPhone: " +
-        phone +
-
-        "\n\nOpening Time: " +
-        openingTime +
-
-        "\n\nClosing Time: " +
-        closingTime +
-
-        "\n\nStatus: " +
-        status.text
-
+```
+const status =
+    getBusinessStatus(
+        openingTime,
+        closingTime
     );
 
-}
 
+alert(
+
+    "Business Name: " +
+    name +
+
+    "\n\nLocation: " +
+    location +
+
+    "\n\nPhone: " +
+    phone +
+
+    "\n\nOpening Time: " +
+    openingTime +
+
+    "\n\nClosing Time: " +
+    closingTime +
+
+    "\n\nStatus: " +
+    status.text
+
+);
+```
+
+}
 
 /* ==================================================
 GOOGLE MAPS
 ================================================== */
 
 function viewLocation(
-    name,
-    location
+name,
+location
 ) {
 
-    const query =
-        encodeURIComponent(
-            name +
-            " " +
-            location
-        );
-
-
-    window.open(
-
-        "https://www.google.com/maps/search/?api=1&query=" +
-        query,
-
-        "_blank"
-
+```
+const query =
+    encodeURIComponent(
+        name +
+        " " +
+        location
     );
 
-}
 
+window.open(
+
+    "https://www.google.com/maps/search/?api=1&query=" +
+    query,
+
+    "_blank"
+
+);
+```
+
+}
 
 /* ==================================================
 RATING & REVIEW - MONGODB
 ================================================== */
 
 async function submitReview(
-    ratingId,
-    reviewId,
-    businessName
+ratingId,
+reviewId,
+businessName
 ) {
 
-    const ratingElement =
-        document.getElementById(
-            ratingId
+```
+const ratingElement =
+    document.getElementById(
+        ratingId
+    );
+
+
+const reviewElement =
+    document.getElementById(
+        reviewId
+    );
+
+
+if (
+    !ratingElement ||
+    !reviewElement
+) {
+
+    alert(
+        "Review fields not found! ❌"
+    );
+
+    return;
+
+}
+
+
+const rating =
+    ratingElement.value;
+
+
+const review =
+    reviewElement.value.trim();
+
+
+if (
+    rating === ""
+) {
+
+    alert(
+        "Please select a rating! ⭐"
+    );
+
+    return;
+
+}
+
+
+if (
+    review === ""
+) {
+
+    alert(
+        "Please write a review! ✍️"
+    );
+
+    return;
+
+}
+
+
+const email =
+    localStorage.getItem(
+        "userEmail"
+    ) ||
+    sessionStorage.getItem(
+        "userEmail"
+    );
+
+
+if (!email) {
+
+    alert(
+        "Please login first to submit a review! ❌"
+    );
+
+
+    window.location.href =
+        "login.html";
+
+
+    return;
+
+}
+
+
+try {
+
+    const response =
+        await fetch(
+            REVIEW_API_URL,
+            {
+
+                method:
+                    "POST",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json"
+
+                },
+
+                body:
+                    JSON.stringify({
+
+                        email:
+                            email,
+
+                        businessName:
+                            businessName,
+
+                        rating:
+                            Number(rating),
+
+                        review:
+                            review
+
+                    })
+
+            }
         );
 
 
-    const reviewElement =
-        document.getElementById(
-            reviewId
+    const data =
+        await response.json();
+
+
+    if (!response.ok) {
+
+        throw new Error(
+
+            data.message ||
+            "Review submission failed"
+
+        );
+
+    }
+
+
+    alert(
+        "Review submitted successfully! ⭐"
+    );
+
+
+    ratingElement.value =
+        "";
+
+
+    reviewElement.value =
+        "";
+
+
+    const businessesResponse =
+        await fetch(API_URL);
+
+
+    const businesses =
+        await businessesResponse.json();
+
+
+    allBusinesses =
+        businesses;
+
+
+    populateServiceSelect(
+        businesses
+    );
+
+
+    const businessIndex =
+        businesses.findIndex(
+            function(item) {
+
+                return (
+                    String(item.name)
+                        .trim()
+                        .toLowerCase() ===
+                    String(businessName)
+                        .trim()
+                        .toLowerCase()
+                );
+
+            }
         );
 
 
     if (
-        !ratingElement ||
-        !reviewElement
+        businessIndex !== -1
     ) {
 
-        alert(
-            "Review fields not found! ❌"
-        );
-
-        return;
-
-    }
-
-
-    const rating =
-        ratingElement.value;
-
-
-    const review =
-        reviewElement.value.trim();
-
-
-    if (
-        rating === ""
-    ) {
-
-        alert(
-            "Please select a rating! ⭐"
-        );
-
-        return;
-
-    }
-
-
-    if (
-        review === ""
-    ) {
-
-        alert(
-            "Please write a review! ✍️"
-        );
-
-        return;
-
-    }
-
-
-    const email =
-        localStorage.getItem(
-            "userEmail"
-        ) ||
-        sessionStorage.getItem(
-            "userEmail"
-        );
-
-
-    if (!email) {
-
-        alert(
-            "Please login first to submit a review! ❌"
-        );
-
-
-        window.location.href =
-            "login.html";
-
-
-        return;
-
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                REVIEW_API_URL,
-                {
-
-                    method:
-                        "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            email:
-                                email,
-
-                            businessName:
-                                businessName,
-
-                            rating:
-                                Number(rating),
-
-                            review:
-                                review
-
-                        })
-
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-
-                data.message ||
-                "Review submission failed"
-
-            );
-
-        }
-
-
-        alert(
-            "Review submitted successfully! ⭐"
-        );
-
-
-        ratingElement.value =
-            "";
-
-
-        reviewElement.value =
-            "";
-
-
-        const businessesResponse =
-            await fetch(API_URL);
-
-
-        const businesses =
-            await businessesResponse.json();
-
-
-        const businessIndex =
-            businesses.findIndex(
-                function(item) {
-
-                    return (
-                        String(item.name)
-                            .trim()
-                            .toLowerCase() ===
-                        String(businessName)
-                            .trim()
-                            .toLowerCase()
-                    );
-
-                }
-            );
-
-
-        if (
-            businessIndex !== -1
-        ) {
-
-            loadReviews(
-                businessName,
-                "reviews" + businessIndex
-            );
-
-        }
-
-    }
-
-
-    catch (error) {
-
-        console.error(
-            "Review Error:",
-            error
-        );
-
-
-        alert(
-
-            "Review failed! ❌\n\n" +
-            error.message
-
+        loadReviews(
+            businessName,
+            "reviews" + businessIndex
         );
 
     }
 
 }
 
+
+catch (error) {
+
+    console.error(
+        "Review Error:",
+        error
+    );
+
+
+    alert(
+
+        "Review failed! ❌\n\n" +
+        error.message
+
+    );
+
+}
+```
+
+}
 
 /* ==================================================
 LOAD REVIEWS
 ================================================== */
 
 async function loadReviews(
-    businessName,
-    containerId
+businessName,
+containerId
 ) {
 
-    const container =
-        document.getElementById(
-            containerId
+```
+const container =
+    document.getElementById(
+        containerId
+    );
+
+
+if (!container) {
+
+    return;
+
+}
+
+
+try {
+
+    const response =
+        await fetch(
+            REVIEW_API_URL +
+            "/" +
+            encodeURIComponent(
+                businessName
+            )
         );
 
 
-    if (!container) {
+    if (!response.ok) {
+
+        throw new Error(
+            "Unable to load reviews"
+        );
+
+    }
+
+
+    const reviews =
+        await response.json();
+
+
+    if (
+        !Array.isArray(reviews) ||
+        reviews.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <p>
+                No reviews yet.
+            </p>
+
+        `;
 
         return;
 
     }
 
 
-    try {
+    container.innerHTML = `
 
-        const response =
-            await fetch(
-                REVIEW_API_URL +
-                "/" +
-                encodeURIComponent(
-                    businessName
-                )
-            );
+        <h4>
+            📝 Customer Reviews
+        </h4>
+
+    `;
 
 
-        if (!response.ok) {
+    reviews.forEach(
+        function(review) {
 
-            throw new Error(
-                "Unable to load reviews"
-            );
-
-        }
-
-
-        const reviews =
-            await response.json();
+            const reviewDiv =
+                document.createElement(
+                    "div"
+                );
 
 
-        if (
-            !Array.isArray(reviews) ||
-            reviews.length === 0
-        ) {
+            reviewDiv.style =
+                "border:1px solid #ddd;" +
+                "padding:12px;" +
+                "margin-top:10px;" +
+                "border-radius:8px;";
 
-            container.innerHTML = `
+
+            reviewDiv.innerHTML = `
 
                 <p>
-                    No reviews yet.
+
+                    <b>
+                        Rating:
+                    </b>
+
+                    ${"⭐".repeat(
+                        Number(review.rating) || 0
+                    )}
+
                 </p>
+
+
+                <p>
+
+                    <b>
+                        Review:
+                    </b>
+
+                    ${escapeHTML(
+                        review.review
+                    )}
+
+                </p>
+
+
+                <button
+                    type="button"
+                    style="
+                        background:red;
+                        color:white;
+                        border:none;
+                        padding:8px 12px;
+                        border-radius:5px;
+                        cursor:pointer;
+                    "
+                    onclick="deleteReview(
+                        '${escapeJS(
+                            review._id
+                        )}',
+                        '${escapeJS(
+                            businessName
+                        )}',
+                        '${escapeJS(
+                            containerId
+                        )}'
+                    )"
+                >
+
+                    🗑️ Delete Review
+
+                </button>
 
             `;
 
-            return;
+
+            container.appendChild(
+                reviewDiv
+            );
 
         }
-
-
-        container.innerHTML = `
-
-            <h4>
-                📝 Customer Reviews
-            </h4>
-
-        `;
-
-
-        reviews.forEach(
-            function(review) {
-
-                const reviewDiv =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                reviewDiv.style =
-                    "border:1px solid #ddd;" +
-                    "padding:12px;" +
-                    "margin-top:10px;" +
-                    "border-radius:8px;";
-
-
-                reviewDiv.innerHTML = `
-
-                    <p>
-
-                        <b>
-                            Rating:
-                        </b>
-
-                        ${"⭐".repeat(
-                            Number(review.rating) || 0
-                        )}
-
-                    </p>
-
-
-                    <p>
-
-                        <b>
-                            Review:
-                        </b>
-
-                        ${escapeHTML(
-                            review.review
-                        )}
-
-                    </p>
-
-
-                    <button
-                        type="button"
-                        style="
-                            background:red;
-                            color:white;
-                            border:none;
-                            padding:8px 12px;
-                            border-radius:5px;
-                            cursor:pointer;
-                        "
-                        onclick="deleteReview(
-                            '${escapeJS(
-                                review._id
-                            )}',
-                            '${escapeJS(
-                                businessName
-                            )}',
-                            '${escapeJS(
-                                containerId
-                            )}'
-                        )"
-                    >
-
-                        🗑️ Delete Review
-
-                    </button>
-
-                `;
-
-
-                container.appendChild(
-                    reviewDiv
-                );
-
-            }
-        );
-
-    }
-
-
-    catch (error) {
-
-        console.error(
-            "Load Reviews Error:",
-            error
-        );
-
-
-        container.innerHTML = `
-
-            <p>
-                Unable to load reviews. ❌
-            </p>
-
-        `;
-
-    }
+    );
 
 }
 
+
+catch (error) {
+
+    console.error(
+        "Load Reviews Error:",
+        error
+    );
+
+
+    container.innerHTML = `
+
+        <p>
+            Unable to load reviews. ❌
+        </p>
+
+    `;
+
+}
+```
+
+}
 
 /* ==================================================
 DELETE REVIEW
 ================================================== */
 
 async function deleteReview(
-    reviewId,
-    businessName,
-    containerId
+reviewId,
+businessName,
+containerId
 ) {
 
-    const confirmDelete =
-        confirm(
-            "Are you sure you want to delete this review? ❌"
-        );
+```
+const confirmDelete =
+    confirm(
+        "Are you sure you want to delete this review? ❌"
+    );
 
 
-    if (!confirmDelete) {
+if (!confirmDelete) {
 
-        return;
-
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                "https://business-locator-system.onrender.com/api/reviews/" +
-                encodeURIComponent(reviewId),
-                {
-                    method: "DELETE"
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-
-                data.message ||
-                "Unable to delete review"
-
-            );
-
-        }
-
-
-        alert(
-            "Review deleted successfully! 🗑️"
-        );
-
-
-        loadReviews(
-            businessName,
-            containerId
-        );
-
-    }
-
-
-    catch (error) {
-
-        console.error(
-            "Delete Review Error:",
-            error
-        );
-
-
-        alert(
-
-            "Review delete failed! ❌\n\n" +
-            error.message
-
-        );
-
-    }
+    return;
 
 }
 
+
+try {
+
+    const response =
+        await fetch(
+            "https://business-locator-system.onrender.com/api/reviews/" +
+            encodeURIComponent(reviewId),
+            {
+                method: "DELETE"
+            }
+        );
+
+
+    const data =
+        await response.json();
+
+
+    if (!response.ok) {
+
+        throw new Error(
+
+            data.message ||
+            "Unable to delete review"
+
+        );
+
+    }
+
+
+    alert(
+        "Review deleted successfully! 🗑️"
+    );
+
+
+    loadReviews(
+        businessName,
+        containerId
+    );
+
+}
+
+
+catch (error) {
+
+    console.error(
+        "Delete Review Error:",
+        error
+    );
+
+
+    alert(
+
+        "Review delete failed! ❌\n\n" +
+        error.message
+
+    );
+
+}
+```
+
+}
 
 /* ==================================================
 LIVE CHAT
 ================================================== */
 
-const CHAT_API_URL =
-    "https://business-locator-system.onrender.com/api/chats";
-
-
 let currentChatBusiness = "";
 
-
 function openChat(
-    businessName
+businessName
 ) {
 
-    currentChatBusiness =
-        businessName;
+```
+currentChatBusiness =
+    businessName;
 
 
-    document.getElementById(
-        "chatWindow"
-    ).style.display =
-        "block";
+document.getElementById(
+    "chatWindow"
+).style.display =
+    "block";
 
 
-    document.getElementById(
-        "chatBusinessName"
-    ).innerText =
-        "💬 " +
-        businessName;
+document.getElementById(
+    "chatBusinessName"
+).innerText =
+    "💬 " +
+    businessName;
+
+
+document.getElementById(
+    "chatMessages"
+).innerHTML =
+    "<p>Loading messages... ⏳</p>";
+
+
+loadChatMessages();
+```
+
+}
+
+function closeChat() {
+
+```
+document.getElementById(
+    "chatWindow"
+).style.display =
+    "none";
+```
+
+}
+
+async function loadChatMessages() {
+
+```
+try {
+
+    const response =
+        await fetch(
+            CHAT_API_URL +
+            "/" +
+            encodeURIComponent(
+                currentChatBusiness
+            )
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Failed to load messages"
+        );
+
+    }
+
+
+    const chats =
+        await response.json();
+
+
+    const chatMessages =
+        document.getElementById(
+            "chatMessages"
+        );
+
+
+    if (
+        !Array.isArray(chats) ||
+        chats.length === 0
+    ) {
+
+        chatMessages.innerHTML =
+            "<p>No messages yet. Start the conversation! 💬</p>";
+
+        return;
+
+    }
+
+
+    chatMessages.innerHTML =
+        "";
+
+
+    chats.forEach(
+        function(chat) {
+
+            const messageDiv =
+                document.createElement(
+                    "div"
+                );
+
+
+            messageDiv.style.marginBottom =
+                "10px";
+
+
+            messageDiv.style.padding =
+                "8px";
+
+
+            messageDiv.style.borderRadius =
+                "8px";
+
+
+            messageDiv.style.background =
+                "white";
+
+
+            const sender =
+                chat.sender === "business"
+                ? "🏢 Business"
+                : "👤 " +
+                  chat.userName;
+
+
+            messageDiv.innerHTML = `
+
+                <strong>
+                    ${escapeHTML(sender)}
+                </strong>
+
+                <br>
+
+                ${escapeHTML(
+                    chat.message
+                )}
+
+            `;
+
+
+            chatMessages.appendChild(
+                messageDiv
+            );
+
+        }
+    );
+
+
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
+
+}
+
+
+catch (error) {
+
+    console.error(
+        "Chat Loading Error:",
+        error
+    );
 
 
     document.getElementById(
         "chatMessages"
     ).innerHTML =
-        "<p>Loading messages... ⏳</p>";
+        "<p>Unable to load messages. ❌</p>";
 
-
-    loadChatMessages();
+}
+```
 
 }
 
+async function sendChatMessage() {
 
-function closeChat() {
-
+```
+const userName =
     document.getElementById(
-        "chatWindow"
-    ).style.display =
-        "none";
+        "chatUserName"
+    ).value.trim();
+
+
+const message =
+    document.getElementById(
+        "chatMessageInput"
+    ).value.trim();
+
+
+if (!userName) {
+
+    alert(
+        "Please enter your name."
+    );
+
+    return;
 
 }
 
 
-async function loadChatMessages() {
+if (!message) {
 
-    try {
+    alert(
+        "Please enter a message."
+    );
 
-        const response =
-            await fetch(
-                CHAT_API_URL +
-                "/" +
-                encodeURIComponent(
-                    currentChatBusiness
-                )
-            );
+    return;
+
+}
 
 
-        if (!response.ok) {
+if (!currentChatBusiness) {
 
-            throw new Error(
-                "Failed to load messages"
-            );
+    alert(
+        "Please select a business first."
+    );
 
-        }
+    return;
 
-
-        const chats =
-            await response.json();
+}
 
 
-        const chatMessages =
-            document.getElementById(
-                "chatMessages"
-            );
+try {
 
+    const response =
+        await fetch(
+            CHAT_API_URL,
+            {
 
-        if (
-            !Array.isArray(chats) ||
-            chats.length === 0
-        ) {
+                method: "POST",
 
-            chatMessages.innerHTML =
-                "<p>No messages yet. Start the conversation! 💬</p>";
+                headers: {
 
-            return;
+                    "Content-Type":
+                        "application/json"
 
-        }
+                },
 
+                body:
+                    JSON.stringify({
 
-        chatMessages.innerHTML =
-            "";
+                        userName:
+                            userName,
 
+                        businessName:
+                            currentChatBusiness,
 
-        chats.forEach(
-            function(chat) {
+                        message:
+                            message,
 
-                const messageDiv =
-                    document.createElement(
-                        "div"
-                    );
+                        sender:
+                            "user"
 
-
-                messageDiv.style.marginBottom =
-                    "10px";
-
-
-                messageDiv.style.padding =
-                    "8px";
-
-
-                messageDiv.style.borderRadius =
-                    "8px";
-
-
-                messageDiv.style.background =
-                    "white";
-
-
-                const sender =
-                    chat.sender === "business"
-                    ? "🏢 Business"
-                    : "👤 " +
-                      chat.userName;
-
-
-                messageDiv.innerHTML = `
-
-                    <strong>
-                        ${escapeHTML(sender)}
-                    </strong>
-
-                    <br>
-
-                    ${escapeHTML(
-                        chat.message
-                    )}
-
-                `;
-
-
-                chatMessages.appendChild(
-                    messageDiv
-                );
+                    })
 
             }
         );
 
 
-        chatMessages.scrollTop =
-            chatMessages.scrollHeight;
-
-    }
+    const data =
+        await response.json();
 
 
-    catch (error) {
+    if (!response.ok) {
 
-        console.error(
-            "Chat Loading Error:",
-            error
+        throw new Error(
+            data.message ||
+            "Failed to send message"
         );
 
-
-        document.getElementById(
-            "chatMessages"
-        ).innerHTML =
-            "<p>Unable to load messages. ❌</p>";
-
     }
+
+
+    document.getElementById(
+        "chatMessageInput"
+    ).value =
+        "";
+
+
+    await loadChatMessages();
 
 }
 
 
-async function sendChatMessage() {
+catch (error) {
 
-    const userName =
-        document.getElementById(
-            "chatUserName"
-        ).value.trim();
-
-
-    const message =
-        document.getElementById(
-            "chatMessageInput"
-        ).value.trim();
+    console.error(
+        "Chat Send Error:",
+        error
+    );
 
 
-    if (!userName) {
+    alert(
 
-        alert(
-            "Please enter your name."
-        );
+        "Failed to send message! ❌\n\n" +
+        error.message
 
-        return;
-
-    }
-
-
-    if (!message) {
-
-        alert(
-            "Please enter a message."
-        );
-
-        return;
-
-    }
-
-
-    if (!currentChatBusiness) {
-
-        alert(
-            "Please select a business first."
-        );
-
-        return;
-
-    }
-
-
-    try {
-
-        const response =
-            await fetch(
-                CHAT_API_URL,
-                {
-
-                    method: "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            userName:
-                                userName,
-
-                            businessName:
-                                currentChatBusiness,
-
-                            message:
-                                message,
-
-                            sender:
-                                "user"
-
-                        })
-
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.message ||
-                "Failed to send message"
-            );
-
-        }
-
-
-        document.getElementById(
-            "chatMessageInput"
-        ).value =
-            "";
-
-
-        await loadChatMessages();
-
-    }
-
-
-    catch (error) {
-
-        console.error(
-            "Chat Send Error:",
-            error
-        );
-
-
-        alert(
-
-            "Failed to send message! ❌\n\n" +
-            error.message
-
-        );
-
-    }
+    );
 
 }
+```
 
+}
 
 /* ==================================================
 ESCAPE HTML
 ================================================== */
 
 function escapeHTML(
-    value
+value
 ) {
 
-    return String(value || "")
+```
+return String(value || "")
 
-        .replace(
-            /&/g,
-            "&amp;"
-        )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
 
-        .replace(
-            /</g,
-            "&lt;"
-        )
+    .replace(
+        /</g,
+        "&lt;"
+    )
 
-        .replace(
-            />/g,
-            "&gt;"
-        )
+    .replace(
+        />/g,
+        "&gt;"
+    )
 
-        .replace(
-            /"/g,
-            "&quot;"
-        )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
 
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+```
 
 }
-
 
 /* ==================================================
 ESCAPE JAVASCRIPT
 ================================================== */
 
 function escapeJS(
-    value
+value
 ) {
 
-    return String(value || "")
+```
+return String(value || "")
 
-        .replace(
-            /\\/g,
-            "\\\\"
-        )
+    .replace(
+        /\\/g,
+        "\\\\"
+    )
 
-        .replace(
-            /'/g,
-            "\\'"
-        )
+    .replace(
+        /'/g,
+        "\\'"
+    )
 
-        .replace(
-            /"/g,
-            '\\"'
-        )
+    .replace(
+        /"/g,
+        '\\"'
+    )
 
-        .replace(
-            /\r?\n/g,
-            "\\n"
-        );
+    .replace(
+        /\r?\n/g,
+        "\\n"
+    );
+```
 
 }
 
