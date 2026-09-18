@@ -867,7 +867,30 @@ app.post("/api/chats", async function (req, res) {
 
         await newChat.save();
 
-        res.status(201).json(newChat);
+/* AUTOMATIC BUSINESS REPLY */
+
+const businessReply = new Chat({
+
+    userName: userName,
+
+    businessName: businessName,
+
+    message:
+        `Hello ${userName}! Thank you for contacting ${businessName}. How can we help you? Please let us know your requirement.`,
+
+    sender: "business"
+
+});
+
+await businessReply.save();
+
+res.status(201).json({
+
+    userMessage: newChat,
+
+    businessReply: businessReply
+
+});
 
     } catch (error) {
 
