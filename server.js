@@ -611,14 +611,13 @@ app.post(
                         phone,
 
                     image:
-                        imagePath
+                        imagePath,
                            services:
             services
                 ? JSON.parse(services)
                 : []
 
-
-                });
+         });
 
             await business.save();
 
