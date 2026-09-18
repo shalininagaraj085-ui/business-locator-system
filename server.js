@@ -869,26 +869,7 @@ app.post("/api/chats", async function (req, res) {
 
 /* AUTOMATIC BUSINESS REPLY */
 
-const businessReply = new Chat({
 
-    userName: userName,
-
-    businessName: businessName,
-
-    message:
-        `Hello ${userName}! Thank you for contacting ${businessName}. How can we help you? Please let us know your requirement.`,
-
-    sender: "business"
-
-});
-
-await businessReply.save();
-
-res.status(201).json({
-
-    userMessage: newChat,
-
-    businessReply: businessReply
 
 });
 
@@ -901,6 +882,83 @@ res.status(201).json({
         });
 
     }
+/* =========================================
+   GET BUSINESS INFORMATION
+========================================= */
+
+const business = await Business.findOne({
+    name: businessName
+});
+
+if (!business) {
+
+    return res.status(404).json({
+        message: "Business information not found"
+    });
+
+}
+
+
+/* =========================================
+   AUTOMATIC DETAILED BUSINESS REPLY
+========================================= */
+
+const businessReplyMessage =
+`Hello ${userName}! 👋
+
+Thank you for contacting ${business.name}.
+
+Here is the complete information about this business:
+
+🏢 Business Name:
+${business.name}
+
+📂 Category:
+${business.category}
+
+📍 Location:
+${business.location}
+
+📞 Phone:
+${business.phone}
+
+ℹ️ About the Business:
+${business.name} is a ${business.category} business located in ${business.location}.
+
+📌 For more information, enquiries, or assistance, please contact the business using the phone number provided above.
+
+Thank you for choosing ${business.name}! 😊`;
+
+
+/* =========================================
+   SAVE BUSINESS REPLY
+========================================= */
+
+const businessReply = new Chat({
+
+    userName: userName,
+
+    businessName: business.name,
+
+    message: businessReplyMessage,
+
+    sender: "business"
+
+});
+
+await businessReply.save();
+
+
+/* =========================================
+   SEND RESPONSE
+========================================= */
+
+res.status(201).json({
+
+    userMessage: newChat,
+
+    businessReply: businessReply
+
 });
 
 /* =========================================
