@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -150,6 +151,53 @@
         <br><br>
 
 
+        <!-- SERVICES & PRICES -->
+
+        <h3>💰 Services & Prices</h3>
+
+        <p>
+            Add services/products and their prices for Price Comparison.
+        </p>
+
+
+        <div id="serviceContainer">
+
+            <div class="service-row">
+
+                <input
+                    type="text"
+                    class="serviceName"
+                    placeholder="Service Name e.g. Haircut"
+                >
+
+                <input
+                    type="number"
+                    class="servicePrice"
+                    placeholder="Price e.g. 250"
+                    min="0"
+                    step="0.01"
+                >
+
+            </div>
+
+        </div>
+
+
+        <br>
+
+
+        <button
+            type="button"
+            onclick="addServiceRow()">
+
+            ➕ Add Another Service
+
+        </button>
+
+
+        <br><br>
+
+
         <button type="submit">
 
             ➕ Add Business
@@ -187,6 +235,7 @@
 
 
 <script>
+
 
 /* ADMIN LOGIN DETAILS */
 
@@ -290,6 +339,110 @@ function adminLogout() {
 }
 
 
+/* ADD SERVICE ROW */
+
+function addServiceRow() {
+
+    const container =
+        document.getElementById(
+            "serviceContainer"
+        );
+
+
+    const row =
+        document.createElement("div");
+
+
+    row.className =
+        "service-row";
+
+
+    row.style.marginTop = "10px";
+
+
+    row.innerHTML = `
+
+        <input
+            type="text"
+            class="serviceName"
+            placeholder="Service Name e.g. Haircut"
+        >
+
+        <input
+            type="number"
+            class="servicePrice"
+            placeholder="Price e.g. 250"
+            min="0"
+            step="0.01"
+        >
+
+        <button
+            type="button"
+            onclick="this.parentElement.remove()">
+
+            ❌ Remove
+
+        </button>
+
+    `;
+
+
+    container.appendChild(row);
+
+}
+
+
+/* GET SERVICES */
+
+function getServices() {
+
+    const rows =
+        document.querySelectorAll(
+            ".service-row"
+        );
+
+
+    const services = [];
+
+
+    rows.forEach(function(row) {
+
+        const name =
+            row
+            .querySelector(".serviceName")
+            .value
+            .trim();
+
+
+        const price =
+            row
+            .querySelector(".servicePrice")
+            .value;
+
+
+        if (
+            name !== "" &&
+            price !== ""
+        ) {
+
+            services.push({
+
+                name: name,
+
+                price: Number(price)
+
+            });
+
+        }
+
+    });
+
+
+    return services;
+
+}
+
+
 /* ADD BUSINESS */
 
 document
@@ -327,12 +480,14 @@ document
             .trim();
 
 
-        /* GET IMAGE */
-
         const imageFile =
             document
             .getElementById("businessImage")
             .files[0];
+
+
+        const services =
+            getServices();
 
 
         if (category === "") {
@@ -357,19 +512,30 @@ document
             name
         );
 
+
         formData.append(
             "category",
             category
         );
+
 
         formData.append(
             "location",
             location
         );
 
+
         formData.append(
             "phone",
             phone
+        );
+
+
+        /* SEND SERVICES AS JSON */
+
+        formData.append(
+            "services",
+            JSON.stringify(services)
         );
 
 
@@ -424,6 +590,35 @@ document
                 .reset();
 
 
+            /* RESET SERVICE ROWS */
+
+            document
+                .getElementById(
+                    "serviceContainer"
+                )
+                .innerHTML = `
+
+                    <div class="service-row">
+
+                        <input
+                            type="text"
+                            class="serviceName"
+                            placeholder="Service Name e.g. Haircut"
+                        >
+
+                        <input
+                            type="number"
+                            class="servicePrice"
+                            placeholder="Price e.g. 250"
+                            min="0"
+                            step="0.01"
+                        >
+
+                    </div>
+
+                `;
+
+
             /* SHOW UPDATED LIST */
 
             displayBusinesses();
@@ -459,9 +654,11 @@ async function displayBusinesses() {
 
 
     list.innerHTML = `
+
         <p>
             Loading businesses from MongoDB... ⏳
         </p>
+
     `;
 
 
@@ -494,9 +691,11 @@ async function displayBusinesses() {
         ) {
 
             list.innerHTML = `
+
                 <p>
                     No businesses added yet.
                 </p>
+
             `;
 
             return;
@@ -517,17 +716,61 @@ async function displayBusinesses() {
                     "business-card";
 
 
-                /*
-                    IMAGE FIX
-
-                    Uploaded database image will be used
-                    when available.
-                    Category image will be used only
-                    when no uploaded image exists.
-                */
+                const image =
+                    getCategoryImage(
+                        business.category
+                    );
 
 
-const image = getCategoryImage(business.category);
+                let servicesHTML = "";
+
+
+                if (
+                    business.services &&
+                    business.services.length > 0
+                ) {
+
+                    servicesHTML = `
+
+                        <div>
+
+                            <h4>
+                                💰 Services & Prices
+                            </h4>
+
+                            <ul>
+
+                                ${business.services.map(
+                                    function(service) {
+
+                                        return `
+
+                                            <li>
+
+                                                ${escapeHTML(
+                                                    service.name
+                                                )}
+
+                                                -
+
+                                                ₹${Number(
+                                                    service.price
+                                                ).toFixed(2)}
+
+                                            </li>
+
+                                        `;
+
+                                    }
+                                ).join("")}
+
+                            </ul>
+
+                        </div>
+
+                    `;
+
+                }
 
 
                 card.innerHTML = `
@@ -546,33 +789,53 @@ const image = getCategoryImage(business.category);
                         "
                     >
 
+
                     <h3>
+
                         🏪
+
                         ${escapeHTML(
                             business.name
                         )}
+
                     </h3>
 
+
                     <p>
+
                         <b>Category:</b>
+
                         ${escapeHTML(
                             business.category
                         )}
+
                     </p>
 
+
                     <p>
+
                         <b>Location:</b>
+
                         ${escapeHTML(
                             business.location
                         )}
+
                     </p>
 
+
                     <p>
+
                         <b>Phone:</b>
+
                         ${escapeHTML(
                             business.phone
                         )}
+
                     </p>
+
+
+                    ${servicesHTML}
+
 
                     <button
                         type="button"
@@ -583,6 +846,7 @@ const image = getCategoryImage(business.category);
                         ✏️ Edit
 
                     </button>
+
 
                     <button
                         type="button"
@@ -623,10 +887,11 @@ const image = getCategoryImage(business.category);
                 </h3>
 
                 <p>
+
                     Please make sure
                     <b>server.js</b>
-                    is running on port
-                    <b>5000</b>.
+                    is running.
+
                 </p>
 
             </div>
@@ -683,13 +948,15 @@ function getCategoryImage(category) {
         return "images/hotel.jpg.png";
 
     }
+
+
     if (
-    value.includes("college")
-) {
+        value.includes("college")
+    ) {
 
-    return "images/college.jpg.png";
+        return "images/college.jpg.png";
 
-}
+    }
 
 
     if (
@@ -914,7 +1181,10 @@ async function editBusiness(id) {
 
             location: newLocation,
 
-            phone: newPhone
+            phone: newPhone,
+
+            services:
+                business.services || []
 
         };
 
@@ -1126,3 +1396,4 @@ if (
 </body>
 
 </html>
+```
