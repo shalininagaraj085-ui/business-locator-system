@@ -812,6 +812,7 @@ app.delete(
 
 // GET chat messages for a business
 app.get("/api/chats/:businessName", async function (req, res) {
+
     try {
 
         const chats = await Chat.find({
@@ -824,18 +825,23 @@ app.get("/api/chats/:businessName", async function (req, res) {
 
     } catch (error) {
 
-        console.error("Chat fetch error:", error);
+        console.error(
+            "Chat fetch error:",
+            error
+        );
 
         res.status(500).json({
             message: "Failed to fetch chat messages"
         });
 
     }
+
 });
 
 
 // SEND chat message
 app.post("/api/chats", async function (req, res) {
+
     try {
 
         const {
@@ -845,6 +851,8 @@ app.post("/api/chats", async function (req, res) {
             sender
         } = req.body;
 
+
+        // Check required fields
         if (!userName || !businessName || !message) {
 
             return res.status(400).json({
@@ -853,6 +861,8 @@ app.post("/api/chats", async function (req, res) {
 
         }
 
+
+        // Save user message
         const newChat = new Chat({
 
             userName: userName,
@@ -866,13 +876,13 @@ app.post("/api/chats", async function (req, res) {
         });
 
         await newChat.save();
-               /* =========================================
-           GET BUSINESS INFORMATION
-        ========================================= */
 
+
+        // Find selected business
         const business = await Business.findOne({
             name: businessName
         });
+
 
         if (!business) {
 
@@ -883,10 +893,7 @@ app.post("/api/chats", async function (req, res) {
         }
 
 
-        /* =========================================
-           AUTOMATIC DETAILED BUSINESS REPLY
-        ========================================= */
-
+        // Create detailed business reply
         const businessReplyMessage =
 `Hello ${userName}! 👋
 
@@ -914,10 +921,7 @@ ${business.name} is a ${business.category} business located in ${business.locati
 Thank you for choosing ${business.name}! 😊`;
 
 
-        /* =========================================
-           SAVE BUSINESS REPLY
-        ========================================= */
-
+        // Save business reply
         const businessReply = new Chat({
 
             userName: userName,
@@ -933,10 +937,7 @@ Thank you for choosing ${business.name}! 😊`;
         await businessReply.save();
 
 
-        /* =========================================
-           SEND RESPONSE
-        ========================================= */
-
+        // Send response
         res.status(201).json({
 
             userMessage: newChat,
@@ -944,6 +945,7 @@ Thank you for choosing ${business.name}! 😊`;
             businessReply: businessReply
 
         });
+
 
     } catch (error) {
 
@@ -963,101 +965,6 @@ Thank you for choosing ${business.name}! 😊`;
     }
 
 });
-
-/* AUTOMATIC BUSINESS REPLY */
-
-
-
-});
-
-    } catch (error) {
-
-        console.error("Chat send error:", error);
-
-        res.status(500).json({
-            message: "Failed to send message"
-        });
-
-    }
-/* =========================================
-   GET BUSINESS INFORMATION
-========================================= */
-
-const business = await Business.findOne({
-    name: businessName
-});
-
-if (!business) {
-
-    return res.status(404).json({
-        message: "Business information not found"
-    });
-
-}
-
-
-/* =========================================
-   AUTOMATIC DETAILED BUSINESS REPLY
-========================================= */
-
-const businessReplyMessage =
-`Hello ${userName}! 👋
-
-Thank you for contacting ${business.name}.
-
-Here is the complete information about this business:
-
-🏢 Business Name:
-${business.name}
-
-📂 Category:
-${business.category}
-
-📍 Location:
-${business.location}
-
-📞 Phone:
-${business.phone}
-
-ℹ️ About the Business:
-${business.name} is a ${business.category} business located in ${business.location}.
-
-📌 For more information, enquiries, or assistance, please contact the business using the phone number provided above.
-
-Thank you for choosing ${business.name}! 😊`;
-
-
-/* =========================================
-   SAVE BUSINESS REPLY
-========================================= */
-
-const businessReply = new Chat({
-
-    userName: userName,
-
-    businessName: business.name,
-
-    message: businessReplyMessage,
-
-    sender: "business"
-
-});
-
-await businessReply.save();
-
-
-/* =========================================
-   SEND RESPONSE
-========================================= */
-
-res.status(201).json({
-
-    userMessage: newChat,
-
-    businessReply: businessReply
-
-});
-
 /* =========================================
    MULTER / GENERAL ERROR HANDLER
 ========================================= */
