@@ -25,6 +25,16 @@ const businessSchema = new mongoose.Schema({
     image: {
         type: String,
         default: ""
+    },
+
+    openingTime: {
+        type: String,
+        default: "09:00"
+    },
+
+    closingTime: {
+        type: String,
+        default: "21:00"
     }
 
 });
