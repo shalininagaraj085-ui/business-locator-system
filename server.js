@@ -866,6 +866,103 @@ app.post("/api/chats", async function (req, res) {
         });
 
         await newChat.save();
+               /* =========================================
+           GET BUSINESS INFORMATION
+        ========================================= */
+
+        const business = await Business.findOne({
+            name: businessName
+        });
+
+        if (!business) {
+
+            return res.status(404).json({
+                message: "Business information not found"
+            });
+
+        }
+
+
+        /* =========================================
+           AUTOMATIC DETAILED BUSINESS REPLY
+        ========================================= */
+
+        const businessReplyMessage =
+`Hello ${userName}! 👋
+
+Thank you for contacting ${business.name}.
+
+Here is the complete information about this business:
+
+🏢 Business Name:
+${business.name}
+
+📂 Category:
+${business.category}
+
+📍 Location:
+${business.location}
+
+📞 Phone:
+${business.phone}
+
+ℹ️ About the Business:
+${business.name} is a ${business.category} business located in ${business.location}.
+
+📌 For more information, enquiries, or assistance, please contact the business using the phone number provided above.
+
+Thank you for choosing ${business.name}! 😊`;
+
+
+        /* =========================================
+           SAVE BUSINESS REPLY
+        ========================================= */
+
+        const businessReply = new Chat({
+
+            userName: userName,
+
+            businessName: business.name,
+
+            message: businessReplyMessage,
+
+            sender: "business"
+
+        });
+
+        await businessReply.save();
+
+
+        /* =========================================
+           SEND RESPONSE
+        ========================================= */
+
+        res.status(201).json({
+
+            userMessage: newChat,
+
+            businessReply: businessReply
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Chat send error:",
+            error
+        );
+
+        res.status(500).json({
+
+            message: "Failed to send message",
+
+            error: error.message
+
+        });
+
+    }
+
+});
 
 /* AUTOMATIC BUSINESS REPLY */
 
