@@ -585,8 +585,97 @@ async function displayBusinesses() {
                         )}
 
                     </p>
+                    <p>
 
+    <b>Live Crowd Status:</b>
 
+    ${getLiveStatusEmoji(
+        business.liveStatus
+    )}
+
+    ${escapeHTML(
+        business.liveStatus || "Low Crowd"
+    )}
+
+</p>
+    <p>
+
+    <b>Waiting Time:</b>
+
+    ${Number(
+        business.waitingTime || 0
+    )}
+
+    minutes
+
+</p>
+      <p>
+
+    <b>Status Note:</b>
+
+    ${escapeHTML(
+        business.statusNote || "No note"
+    )}
+
+</p>
+<label>
+    Update Crowd Status
+</label>
+
+<select id="status-${business._id}">
+
+    <option
+        value="Low Crowd"
+        ${business.liveStatus === "Low Crowd" ? "selected" : ""}
+    >
+        🟢 Low Crowd
+    </option>
+
+    <option
+        value="Medium Crowd"
+        ${business.liveStatus === "Medium Crowd" ? "selected" : ""}
+    >
+        🟡 Medium Crowd
+    </option>
+
+    <option
+        value="High Crowd"
+        ${business.liveStatus === "High Crowd" ? "selected" : ""}
+    >
+        🔴 High Crowd
+    </option>
+
+    <option
+        value="Closed"
+        ${business.liveStatus === "Closed" ? "selected" : ""}
+    >
+        ⚫ Closed
+    </option>
+
+</select>
+ <input
+    type="number"
+    id="waiting-${business._id}"
+    min="0"
+    value="${Number(business.waitingTime || 0)}"
+    placeholder="Waiting time in minutes"
+>
+<input
+    type="text"
+    id="note-${business._id}"
+    value="${escapeHTML(
+        business.statusNote || ""
+    )}"
+    placeholder="Status note"
+>
+<button
+    type="button"
+    onclick="updateLiveStatus('${business._id}')">
+
+    🔄 Update Live Status
+
+</button>
+      
                     <button
                         type="button"
                         onclick="editBusiness(
@@ -995,7 +1084,118 @@ async function editBusiness(id) {
 
 }
 
+/* UPDATE LIVE CROWD STATUS */
 
+async function updateLiveStatus(id) {
+
+    try {
+
+        const liveStatus =
+            document
+                .getElementById(
+                    "status-" + id
+                )
+                .value;
+
+        const waitingTime =
+            document
+                .getElementById(
+                    "waiting-" + id
+                )
+                .value;
+
+        const statusNote =
+            document
+                .getElementById(
+                    "note-" + id
+                )
+                .value
+                .trim();
+
+        const response =
+            await fetch(
+                API_URL + "/" + id + "/status",
+                {
+
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        liveStatus:
+                            liveStatus,
+
+                        waitingTime:
+                            Number(waitingTime) || 0,
+
+                        statusNote:
+                            statusNote
+
+                    })
+
+                }
+            );
+
+        if (!response.ok) {
+
+            const errorData =
+                await response.json();
+
+            throw new Error(
+                errorData.message ||
+                "Failed to update live status"
+            );
+
+        }
+
+        alert(
+            "Live Crowd Status updated successfully! ✅"
+        );
+
+        displayBusinesses();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Live Status Error:",
+            error
+        );
+
+        alert(
+            "Unable to update Live Crowd Status! ❌"
+        );
+
+    }
+
+}
+    /* LIVE STATUS EMOJI */
+
+function getLiveStatusEmoji(status) {
+
+    if (status === "Low Crowd") {
+        return "🟢";
+    }
+
+    if (status === "Medium Crowd") {
+        return "🟡";
+    }
+
+    if (status === "High Crowd") {
+        return "🔴";
+    }
+
+    if (status === "Closed") {
+        return "⚫";
+    }
+
+    return "🟢";
+}
 /* DELETE BUSINESS */
 
 async function deleteBusiness(id) {
