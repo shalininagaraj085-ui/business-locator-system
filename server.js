@@ -806,6 +806,105 @@ app.delete(
 
     }
 );
+
+/* =========================================
+   UPDATE LIVE CROWD STATUS
+========================================= */
+
+app.put(
+    "/api/businesses/:id/status",
+    async function (req, res) {
+
+        try {
+
+            const {
+                liveStatus,
+                waitingTime,
+                statusNote
+            } = req.body;
+
+            const allowedStatuses = [
+                "Low Crowd",
+                "Medium Crowd",
+                "High Crowd",
+                "Closed"
+            ];
+
+            if (
+                liveStatus &&
+                !allowedStatuses.includes(liveStatus)
+            ) {
+
+                return res.status(400).json({
+                    message: "Invalid live status"
+                });
+
+            }
+
+            const updateData = {};
+
+            if (liveStatus !== undefined) {
+                updateData.liveStatus = liveStatus;
+            }
+
+            if (waitingTime !== undefined) {
+                updateData.waitingTime = Number(waitingTime);
+            }
+
+            if (statusNote !== undefined) {
+                updateData.statusNote = statusNote;
+            }
+
+            updateData.statusUpdatedAt = new Date();
+
+            const business =
+                await Business.findByIdAndUpdate(
+                    req.params.id,
+                    updateData,
+                    {
+                        new: true,
+                        runValidators: true
+                    }
+                );
+
+            if (!business) {
+
+                return res.status(404).json({
+                    message: "Business not found"
+                });
+
+            }
+
+            res.json({
+
+                message:
+                    "Live crowd status updated successfully",
+
+                business: business
+
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Live Status Update Error:",
+                error
+            );
+
+            res.status(500).json({
+
+                message:
+                    "Error updating live crowd status",
+
+                error:
+                    error.message
+
+            });
+
+        }
+
+    }
+);
 /* =========================================
    LIVE CHAT
 ========================================= */
