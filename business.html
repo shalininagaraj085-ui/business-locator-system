@@ -631,7 +631,45 @@ function displayBusinesses(
                     ${status.text}
 
                 </p>
+            <p
+    style="
+        font-size:18px;
+        font-weight:bold;
+        margin-top:10px;
+    "
+>
 
+    <b>Live Crowd Status:</b>
+
+    ${getLiveStatusEmoji(
+        business.liveStatus
+    )}
+
+    ${escapeHTML(
+        business.liveStatus || "Low Crowd"
+    )}
+
+</p>
+       <p>
+
+    <b>Waiting Time:</b>
+
+    ${Number(
+        business.waitingTime || 0
+    )}
+
+    minutes
+
+</p>
+     <p>
+
+    <b>Status Note:</b>
+
+    ${escapeHTML(
+        business.statusNote || "No note"
+    )}
+
+</p>
 
                 <p>
 
@@ -1756,6 +1794,26 @@ catch (error) {
 
 }
 
+}
+    function getLiveStatusEmoji(status) {
+
+    if (status === "Low Crowd") {
+        return "🟢";
+    }
+
+    if (status === "Medium Crowd") {
+        return "🟡";
+    }
+
+    if (status === "High Crowd") {
+        return "🔴";
+    }
+
+    if (status === "Closed") {
+        return "⚫";
+    }
+
+    return "🟢";
 }
 
 /* ==================================================
