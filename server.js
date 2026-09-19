@@ -565,8 +565,7 @@ app.post(
     name,
     category,
     location,
-    phone,
-    services
+    phone
 } = req.body;
 
             if (
@@ -611,11 +610,7 @@ app.post(
                         phone,
 
                     image:
-                        imagePath,
-                           services:
-            services
-                ? JSON.parse(services)
-                : []
+                        imagePath
 
          });
 
@@ -669,8 +664,7 @@ app.put(
                 name,
                 category,
                 location,
-                phone,
-               services
+                phone
             } = req.body;
 
             const updateData = {
@@ -685,15 +679,7 @@ app.put(
                     location,
 
                 phone:
-                    phone,
-               services:
-        services
-            ? (
-                typeof services === "string"
-                    ? JSON.parse(services)
-                    : services
-              )
-            : []
+                    phone
 
             };
 
