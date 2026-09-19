@@ -150,53 +150,6 @@
         <br><br>
 
 
-        <!-- SERVICES & PRICES -->
-
-        <h3>💰 Services & Prices</h3>
-
-        <p>
-            Add services/products and their prices for Price Comparison.
-        </p>
-
-
-        <div id="serviceContainer">
-
-            <div class="service-row">
-
-                <input
-                    type="text"
-                    class="serviceName"
-                    placeholder="Service Name e.g. Haircut"
-                >
-
-                <input
-                    type="number"
-                    class="servicePrice"
-                    placeholder="Price e.g. 250"
-                    min="0"
-                    step="0.01"
-                >
-
-            </div>
-
-        </div>
-
-
-        <br>
-
-
-        <button
-            type="button"
-            onclick="addServiceRow()">
-
-            ➕ Add Another Service
-
-        </button>
-
-
-        <br><br>
-
-
         <button type="submit">
 
             ➕ Add Business
@@ -337,111 +290,6 @@ function adminLogout() {
 
 }
 
-
-/* ADD SERVICE ROW */
-
-function addServiceRow() {
-
-    const container =
-        document.getElementById(
-            "serviceContainer"
-        );
-
-
-    const row =
-        document.createElement("div");
-
-
-    row.className =
-        "service-row";
-
-
-    row.style.marginTop = "10px";
-
-
-    row.innerHTML = `
-
-        <input
-            type="text"
-            class="serviceName"
-            placeholder="Service Name e.g. Haircut"
-        >
-
-        <input
-            type="number"
-            class="servicePrice"
-            placeholder="Price e.g. 250"
-            min="0"
-            step="0.01"
-        >
-
-        <button
-            type="button"
-            onclick="this.parentElement.remove()">
-
-            ❌ Remove
-
-        </button>
-
-    `;
-
-
-    container.appendChild(row);
-
-}
-
-
-/* GET SERVICES */
-
-function getServices() {
-
-    const rows =
-        document.querySelectorAll(
-            ".service-row"
-        );
-
-
-    const services = [];
-
-
-    rows.forEach(function(row) {
-
-        const name =
-            row
-            .querySelector(".serviceName")
-            .value
-            .trim();
-
-
-        const price =
-            row
-            .querySelector(".servicePrice")
-            .value;
-
-
-        if (
-            name !== "" &&
-            price !== ""
-        ) {
-
-            services.push({
-
-                name: name,
-
-                price: Number(price)
-
-            });
-
-        }
-
-    });
-
-
-    return services;
-
-}
-
-
 /* ADD BUSINESS */
 
 document
@@ -485,10 +333,6 @@ document
             .files[0];
 
 
-        const services =
-            getServices();
-
-
         if (category === "") {
 
             alert(
@@ -527,14 +371,6 @@ document
         formData.append(
             "phone",
             phone
-        );
-
-
-        /* SEND SERVICES AS JSON */
-
-        formData.append(
-            "services",
-            JSON.stringify(services)
         );
 
 
@@ -587,36 +423,6 @@ document
             document
                 .getElementById("businessForm")
                 .reset();
-
-
-            /* RESET SERVICE ROWS */
-
-            document
-                .getElementById(
-                    "serviceContainer"
-                )
-                .innerHTML = `
-
-                    <div class="service-row">
-
-                        <input
-                            type="text"
-                            class="serviceName"
-                            placeholder="Service Name e.g. Haircut"
-                        >
-
-                        <input
-                            type="number"
-                            class="servicePrice"
-                            placeholder="Price e.g. 250"
-                            min="0"
-                            step="0.01"
-                        >
-
-                    </div>
-
-                `;
-
 
             /* SHOW UPDATED LIST */
 
@@ -720,58 +526,6 @@ async function displayBusinesses() {
                         business.category
                     );
 
-
-                let servicesHTML = "";
-
-
-                if (
-                    business.services &&
-                    business.services.length > 0
-                ) {
-
-                    servicesHTML = `
-
-                        <div>
-
-                            <h4>
-                                💰 Services & Prices
-                            </h4>
-
-                            <ul>
-
-                                ${business.services.map(
-                                    function(service) {
-
-                                        return `
-
-                                            <li>
-
-                                                ${escapeHTML(
-                                                    service.name
-                                                )}
-
-                                                -
-
-                                                ₹${Number(
-                                                    service.price
-                                                ).toFixed(2)}
-
-                                            </li>
-
-                                        `;
-
-                                    }
-                                ).join("")}
-
-                            </ul>
-
-                        </div>
-
-                    `;
-
-                }
-
-
                 card.innerHTML = `
 
                     <img
@@ -831,9 +585,6 @@ async function displayBusinesses() {
                         )}
 
                     </p>
-
-
-                    ${servicesHTML}
 
 
                     <button
@@ -1180,10 +931,7 @@ async function editBusiness(id) {
 
             location: newLocation,
 
-            phone: newPhone,
-
-            services:
-                business.services || []
+            phone: newPhone
 
         };
 
