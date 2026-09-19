@@ -206,6 +206,26 @@
             <b>Phone:</b>
             <span id="detailPhone"></span>
         </p>
+         <p>
+    <b>Live Crowd Status:</b>
+    <span id="detailLiveStatus">
+        🟢 Low Crowd
+    </span>
+</p>
+
+<p>
+    <b>Waiting Time:</b>
+    <span id="detailWaitingTime">
+        0 minutes
+    </span>
+</p>
+
+<p>
+    <b>Status Note:</b>
+    <span id="detailStatusNote">
+        No note
+    </span>
+</p>
 
         <p>
             <b>Rating:</b>
@@ -442,7 +462,22 @@ function displayBusinesses(list) {
             <p>
                 <b>Phone:</b>
                 ${business.phone || ""}
-            </p>
+            </p> 
+            <p>
+    <b>Live Crowd Status:</b>
+    ${getLiveStatusEmoji(business.liveStatus)}
+    ${business.liveStatus || "Low Crowd"}
+</p>
+
+<p>
+    <b>Waiting Time:</b>
+    ${Number(business.waitingTime || 0)} minutes
+</p>
+
+<p>
+    <b>Status Note:</b>
+    ${business.statusNote || "No note"}
+</p>
 
             <button
                 onclick="showDetails('${business._id}')">
@@ -585,7 +620,31 @@ async function showDetails(id) {
         "detailPhone"
     ).textContent =
         selectedBusiness.phone || "";
+    document.getElementById(
+    "detailLiveStatus"
+).textContent =
+    getLiveStatusEmoji(
+        selectedBusiness.liveStatus
+    ) +
+    " " +
+    (
+        selectedBusiness.liveStatus ||
+        "Low Crowd"
+    );
 
+document.getElementById(
+    "detailWaitingTime"
+).textContent =
+    Number(
+        selectedBusiness.waitingTime || 0
+    ) +
+    " minutes";
+
+document.getElementById(
+    "detailStatusNote"
+).textContent =
+    selectedBusiness.statusNote ||
+    "No note";
 
     document.getElementById(
         "detailsBox"
@@ -711,6 +770,30 @@ async function loadReviews(
 
     }
 
+}
+    // ==========================================
+// LIVE CROWD STATUS EMOJI
+// ==========================================
+
+function getLiveStatusEmoji(status) {
+
+    if (status === "Low Crowd") {
+        return "🟢";
+    }
+
+    if (status === "Medium Crowd") {
+        return "🟡";
+    }
+
+    if (status === "High Crowd") {
+        return "🔴";
+    }
+
+    if (status === "Closed") {
+        return "⚫";
+    }
+
+    return "🟢";
 }
 
 
